@@ -6,12 +6,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnl
-PKG_VERSION:=3.8.0
+PKG_VERSION:=3.10.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://github.com/thom311/libnl/releases/download/libnl$(subst .,_,$(PKG_VERSION))
-PKG_HASH:=bb726c6d7a08b121978d73ff98425bf313fa26a27a331d465e4f1d7ec5b838c6
+PKG_HASH:=49b3e2235fdb58f5910bbb3ed0de8143b71ffc220571540502eb6c2471f204f5
 
 PKG_LICENSE:=LGPL-2.1
 PKG_LICENSE_FILES:=COPYING
@@ -27,7 +27,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/libnl/default
   SECTION:=libs
   CATEGORY:=Libraries
-  URL:=http://www.infradead.org/~tgr/libnl/
+  URL:=https://www.infradead.org/~tgr/libnl/
   ABI_VERSION:=200
 endef
 

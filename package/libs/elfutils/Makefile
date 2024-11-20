@@ -7,12 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=elfutils
-PKG_VERSION:=0.189
+PKG_VERSION:=0.192
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=https://sourceware.org/$(PKG_NAME)/ftp/$(PKG_VERSION)
-PKG_HASH:=39bd8f1a338e2b7cd4abc3ff11a0eddc6e690f69578a57478d8179b4148708c8
+PKG_SOURCE_URL:=https://sourceware.org/$(PKG_NAME)/ftp/$(PKG_VERSION) \
+                https://mirrors.kernel.org/sourceware/$(PKG_NAME)/$(PKG_VERSION)
+PKG_HASH:=616099beae24aba11f9b63d86ca6cc8d566d968b802391334c91df54eab416b4
 
 PKG_MAINTAINER:=Luiz Angelo Daros de Luca <luizluca@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -54,9 +55,9 @@ define Package/libelf
 endef
 
 ifeq ($(CONFIG_BUILD_NLS),y)
-TARGET_LDFLAGS += -lintl
+	TARGET_LDFLAGS += -lintl
 else
-CONFIGURE_ARGS += --disable-nls
+	CONFIGURE_ARGS += --disable-nls
 endif
 
 HOST_CONFIGURE_ARGS += \
@@ -85,12 +86,8 @@ CONFIGURE_VARS += \
 TARGET_CFLAGS += \
 	-D_GNU_SOURCE \
 	-Wno-unused-result \
-	-Wno-format-nonliteral
-
-ifneq ($(CONFIG_GCC_USE_VERSION_11),y)
-TARGET_CFLAGS += \
+	-Wno-format-nonliteral \
 	-Wno-error=use-after-free
-endif
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/include

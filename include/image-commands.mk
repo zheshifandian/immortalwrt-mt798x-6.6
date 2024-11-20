@@ -46,7 +46,7 @@ endef
 
 ifdef IB
 define Build/append-image-stage
-	dd if=$(STAGING_DIR_IMAGE)/$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(DEVICE_NAME)-$(1) >> $@
+	dd if=$(STAGING_DIR_IMAGE)/$(BOARD)-$(SUBTARGET)-$(DEVICE_NAME)-$(1) >> $@
 endef
 else
 define Build/append-image-stage
@@ -54,7 +54,7 @@ define Build/append-image-stage
 	fwtool -s /dev/null -t "$@.stripmeta" || :
 	fwtool -i /dev/null -t "$@.stripmeta" || :
 	mkdir -p "$(STAGING_DIR_IMAGE)"
-	dd if="$@.stripmeta" of="$(STAGING_DIR_IMAGE)/$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))-$(DEVICE_NAME)-$(1)"
+	dd if="$@.stripmeta" of="$(STAGING_DIR_IMAGE)/$(BOARD)-$(SUBTARGET)-$(DEVICE_NAME)-$(1)"
 	dd if="$@.stripmeta" >> "$@"
 	rm "$@.stripmeta"
 endef
@@ -124,13 +124,6 @@ endef
 
 define Build/append-string
 	echo -n $(1) >> $@
-endef
-
-define Build/append-md5sum-ascii-salted
-	cp $@ $@.salted
-	echo -ne $(1) >> $@.salted
-	$(STAGING_DIR_HOST)/bin/mkhash md5 $@.salted | head -c32 >> $@
-	rm $@.salted
 endef
 
 define Build/append-ubi
@@ -215,7 +208,7 @@ endef
 
 define Build/check-size
 	@imagesize="$$(stat -c%s $@)"; \
-	limitsize="$$(($(subst k,* 1024,$(subst m, * 1024k,$(if $(1),$(1),$(IMAGE_SIZE))))))"; \
+	limitsize="$$(($(call exp_units,$(if $(1),$(1),$(IMAGE_SIZE)))))"; \
 	[ $$limitsize -ge $$imagesize ] || { \
 		$(call ERROR_MESSAGE,    WARNING: Image file $@ is too big: $$imagesize > $$limitsize); \
 		rm -f $@; \
@@ -224,48 +217,6 @@ endef
 
 define Build/copy-file
 	cat "$(1)" > "$@"
-endef
-
-# Create a header for a D-Link AI series recovery image and add it at the beginning of the image
-# Currently supported: AQUILA M30, EAGLE M32 and R32
-# Arguments:
-# 1: Start string of the header
-# 2: Firmware version
-# 3: Block start address
-# 4: Block length
-# 5: Device FMID
-define Build/dlink-ai-recovery-header
-	$(eval header_start=$(word 1,$(1)))
-	$(eval firmware_version=$(word 2,$(1)))
-	$(eval block_start=$(word 3,$(1)))
-	$(eval block_length=$(word 4,$(1)))
-	$(eval device_fmid=$(word 5,$(1)))
-# create $@.header without the checksum
-	echo -en "$(header_start)\x00\x00" > "$@.header"
-# Calculate checksum over data area ($@) and append it to the header.
-# The checksum is the 2byte-sum over the whole data area.
-# Every overflow during the checksum calculation must increment the current checksum value by 1.
-	od -v -w2 -tu2 -An --endian little "$@" | awk '{ s+=$$1; } END { s%=65535; printf "%c%c",s%256,s/256; }' >> "$@.header"
-	echo -en "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00" >> "$@.header"
-	echo -en "$(firmware_version)" >> "$@.header"
-# Only one block supported: Erase start/length is identical to data start/length
-	echo -en "$(block_start)$(block_length)$(block_start)$(block_length)" >> "$@.header"
-# Only zeros
-	echo -en "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" >> "$@.header"
-# Last 16 bytes, but without checksum
-	echo -en "\x42\x48\x02\x00\x00\x00\x08\x00\x00\x00\x00\x00" >> "$@.header"
-	echo -en "$(device_fmid)" >> "$@.header"
-# Calculate and append checksum: The checksum must be set so that the 2byte-sum of the whole header is 0.
-# Every overflow during the checksum calculation must increment the current checksum value by 1.
-	od -v -w2 -tu2 -An --endian little "$@.header" | awk '{s+=65535-$$1;}END{s%=65535;printf "%c%c",s%256,s/256;}' >> "$@.header"
-	cat "$@.header" "$@" > "$@.new"
-	mv "$@.new" "$@"
-	rm "$@.header"
-endef
-
-define Build/dlink-sge-image
-	$(STAGING_DIR_HOST)/bin/dlink-sge-image $(1) $@ $@.enc
-	mv $@.enc $@
 endef
 
 define Build/edimax-header
@@ -277,12 +228,12 @@ define Build/elecom-product-header
 	$(eval product=$(word 1,$(1)))
 	$(eval fw=$(if $(word 2,$(1)),$(word 2,$(1)),$@))
 
-	( \
+	-( \
 		echo -n -e "ELECOM\x00\x00$(product)" | dd bs=40 count=1 conv=sync; \
 		echo -n "0.00" | dd bs=16 count=1 conv=sync; \
 		dd if=$(fw); \
-	) > $(fw).new
-	mv $(fw).new $(fw)
+	) > $(fw).new \
+	&& mv $(fw).new $(fw) || rm -f $(fw)
 endef
 
 define Build/elecom-wrc-gs-factory
@@ -312,10 +263,10 @@ define Build/elx-header
 		echo -ne "$$($(MKHASH) md5 $@ | fold -s2 | xargs -I {} echo \\x{} | tr -d '\n')" | \
 			dd bs=58 count=1 conv=sync; \
 	) > $(KDIR)/tmp/$(DEVICE_NAME).header
-	$(call Build/xor-image,-p $(xor_pattern) -x)
-	cat $(KDIR)/tmp/$(DEVICE_NAME).header $@ > $@.new
-	mv $@.new $@
-	rm -rf $(KDIR)/tmp/$(DEVICE_NAME).header
+	-$(call Build/xor-image,-p $(xor_pattern) -x) \
+	&& cat $(KDIR)/tmp/$(DEVICE_NAME).header $@ > $@.new \
+	&& mv $@.new $@ \
+	&& rm -rf $(KDIR)/tmp/$(DEVICE_NAME).header
 endef
 
 define Build/eva-image
@@ -334,7 +285,7 @@ define Build/initrd_compression
 endef
 
 define Build/fit
-	$(TOPDIR)/scripts/mkits.sh \
+	$(call locked,$(TOPDIR)/scripts/mkits.sh \
 		-D $(DEVICE_NAME) -o $@.its -k $@ \
 		-C $(word 1,$(1)) \
 		$(if $(word 2,$(1)),\
@@ -344,14 +295,14 @@ define Build/fit
 		$(if $(findstring with-rootfs,$(word 3,$(1))),-r $(IMAGE_ROOTFS)) \
 		$(if $(findstring with-initrd,$(word 3,$(1))), \
 			$(if $(CONFIG_TARGET_ROOTFS_INITRAMFS_SEPARATE), \
-				-i $(KERNEL_BUILD_DIR)/initrd.cpio$(strip $(call Build/initrd_compression)))) \
+				-i $(KERNEL_BUILD_DIR)/initrd$(if $(TARGET_PER_DEVICE_ROOTFS),.$(ROOTFS_ID/$(DEVICE_NAME))).cpio$(strip $(call Build/initrd_compression)))) \
 		-a $(KERNEL_LOADADDR) -e $(if $(KERNEL_ENTRY),$(KERNEL_ENTRY),$(KERNEL_LOADADDR)) \
 		$(if $(DEVICE_FDT_NUM),-n $(DEVICE_FDT_NUM)) \
 		$(if $(DEVICE_DTS_DELIMITER),-l $(DEVICE_DTS_DELIMITER)) \
 		$(if $(DEVICE_DTS_LOADADDR),-s $(DEVICE_DTS_LOADADDR)) \
 		$(if $(DEVICE_DTS_OVERLAY),$(foreach dtso,$(DEVICE_DTS_OVERLAY), -O $(dtso):$(KERNEL_BUILD_DIR)/image-$(dtso).dtbo)) \
 		-c $(if $(DEVICE_DTS_CONFIG),$(DEVICE_DTS_CONFIG),"config-1") \
-		-A $(LINUX_KARCH) -v $(LINUX_VERSION)
+		-A $(LINUX_KARCH) -v $(LINUX_VERSION), gen-cpio$(if $(TARGET_PER_DEVICE_ROOTFS),.$(ROOTFS_ID/$(DEVICE_NAME))))
 	PATH=$(LINUX_DIR)/scripts/dtc:$(PATH) mkimage $(if $(findstring external,$(word 3,$(1))),\
 		-E -B 0x1000 $(if $(findstring static,$(word 3,$(1))),-p 0x1000)) -f $@.its $@.new
 	@mv $@.new $@
@@ -452,7 +403,7 @@ endef
 
 define Build/netgear-dni
 	$(STAGING_DIR_HOST)/bin/mkdniimg \
-		-B $(NETGEAR_BOARD_ID) -v $(shell cat $(VERSION_DIST)| sed -e 's/[[:space:]]/-/g').$(firstword $(subst -, ,$(REVISION))) \
+		-B $(NETGEAR_BOARD_ID) -v $(VERSION_DIST).$(firstword $(subst -, ,$(REVISION))) \
 		$(if $(NETGEAR_HW_ID),-H $(NETGEAR_HW_ID)) \
 		-r "$(1)" \
 		-i $@ -o $@.new
@@ -465,9 +416,7 @@ define Build/netgear-encrypted-factory
 		--output-file $@ \
 		--model $(NETGEAR_ENC_MODEL) \
 		--region $(NETGEAR_ENC_REGION) \
-		$(if $(NETGEAR_ENC_HW_ID_LIST),--hw-id-list "$(NETGEAR_ENC_HW_ID_LIST)") \
-		$(if $(NETGEAR_ENC_MODEL_LIST),--model-list "$(NETGEAR_ENC_MODEL_LIST)") \
-		--version V1.0.0.0.$(shell cat $(VERSION_DIST)| sed -e 's/[[:space:]]/-/g').$(firstword $(subst -, ,$(REVISION))) \
+		--version V1.0.0.0.$(VERSION_DIST).$(firstword $(subst -, ,$(REVISION))) \
 		--encryption-block-size 0x20000 \
 		--openssl-bin "$(STAGING_DIR_HOST)/bin/openssl" \
 		--key 6865392d342b4d212964363d6d7e7765312c7132613364316e26322a5a5e2538 \
@@ -494,8 +443,8 @@ endef
 define Build/pad-offset
 	let \
 		size="$$(stat -c%s $@)" \
-		pad="$(subst k,* 1024,$(word 1, $(1)))" \
-		offset="$(subst k,* 1024,$(word 2, $(1)))" \
+		pad="$(call exp_units,$(word 1, $(1)))" \
+		offset="$(call exp_units,$(word 2, $(1)))" \
 		pad="(pad - ((size + offset) % pad)) % pad" \
 		newsize='size + pad'; \
 		dd if=$@ of=$@.new bs=$$newsize count=1 conv=sync
@@ -560,8 +509,8 @@ define Build/seama-seal
 endef
 
 define Build/senao-header
-	$(STAGING_DIR_HOST)/bin/mksenaofw $(1) -e $@ -o $@.new
-	mv $@.new $@
+	-$(STAGING_DIR_HOST)/bin/mksenaofw $(1) -e $@ -o $@.new \
+	&& mv $@.new $@ || rm -f $@
 endef
 
 define Build/sysupgrade-tar
@@ -648,8 +597,8 @@ define Build/uImage
 endef
 
 define Build/xor-image
-	$(STAGING_DIR_HOST)/bin/xorimage -i $@ -o $@.xor $(1)
-	mv $@.xor $@
+	-$(STAGING_DIR_HOST)/bin/xorimage -i $@ -o $@.xor $(1) \
+	&& mv $@.xor $@ || rm -f $@
 endef
 
 define Build/zip
@@ -664,7 +613,7 @@ endef
 
 define Build/zyxel-ras-image
 	let \
-		newsize="$(subst k,* 1024,$(RAS_ROOTFS_SIZE))"; \
+		newsize="$(call exp_units,$(RAS_ROOTFS_SIZE))"; \
 		$(STAGING_DIR_HOST)/bin/mkrasimage \
 			-b $(RAS_BOARD) \
 			-v $(RAS_VERSION) \

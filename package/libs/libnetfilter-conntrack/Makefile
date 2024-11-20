@@ -30,7 +30,7 @@ define Package/libnetfilter-conntrack
   CATEGORY:=Libraries
   DEPENDS:=+libnfnetlink +kmod-nf-conntrack-netlink +libmnl
   TITLE:=API to the in-kernel connection tracking state table
-  URL:=http://www.netfilter.org/projects/libnetfilter_conntrack/
+  URL:=https://www.netfilter.org/projects/libnetfilter_conntrack/
   ABI_VERSION:=3
 endef
 

@@ -13,7 +13,7 @@ define Build/elecom-wrc-gs-factory
 	$(eval product=$(word 1,$(1)))
 	$(eval version=$(word 2,$(1)))
 	$(eval hash_opt=$(word 3,$(1)))
-	$(STAGING_DIR_HOST)/bin/mkhash md5 $(hash_opt) $@ >> $@
+	$(MKHASH) md5 $(hash_opt) $@ >> $@
 	( \
 		echo -n "ELECOM $(product) v$(version)" | \
 			dd bs=32 count=1 conv=sync; \

@@ -146,7 +146,7 @@ sub merge_package_lists($$) {
 	my %pkgs;
 
 	foreach my $pkg (@$list1, @$list2) {
-		$pkgs{$pkg} = 1;
+		$pkgs{$pkg =~ s/^~//r} = 1;
 	}
 	foreach my $pkg (keys %pkgs) {
 		push @l, $pkg unless ($pkg =~ /^-/ or $pkgs{"-$pkg"});
@@ -179,7 +179,7 @@ EOF
 	print <<EOF;
 choice
 	prompt "Target System"
-	default TARGET_x86
+	default TARGET_ath79
 	reset if !DEVEL
 	
 EOF

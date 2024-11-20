@@ -12,6 +12,8 @@ use warnings;
 use File::Basename;
 use File::Copy;
 use Text::ParseWords;
+use File::Path;
+use JSON::PP;
 
 @ARGV > 2 or die "Syntax: $0 <target dir> <filename> <hash> <url filename> [<mirror> ...]\n";
 
@@ -54,6 +56,21 @@ sub localmirrors {
 	$mirror and push @mlist, split(/;/, $mirror);
 
 	return @mlist;
+}
+
+sub projectsmirrors {
+	my $project = shift;
+	my $append = shift;
+
+	open (PM, "$scriptdir/projectsmirrors.json") ||
+		die "Can´t open $scriptdir/projectsmirrors.json: $!\n";
+	local $/;
+	my $mirror_json = <PM>;
+	my $mirror = decode_json $mirror_json;
+
+	foreach (@{$mirror->{$project}}) {
+		push @mirrors, $_ . "/" . ($append or "");
+	}
 }
 
 sub which($) {
@@ -107,12 +124,12 @@ sub download_cmd {
 	my $filename = shift;
 
 	if ($download_tool eq "curl") {
-		return (qw(curl -f --connect-timeout 20 --retry 5 --location),
+		return (qw(curl -f --connect-timeout 10 --retry 3 --location),
 			$check_certificate ? () : '--insecure',
 			shellwords($ENV{CURL_OPTIONS} || ''),
 			$url);
 	} elsif ($download_tool eq "wget") {
-		return (qw(wget --tries=5 --timeout=20 --output-document=-),
+		return (qw(wget --tries=3 --timeout=10 --output-document=-),
 			$check_certificate ? () : '--no-check-certificate',
 			shellwords($ENV{WGET_OPTIONS} || ''),
 			$url);
@@ -157,7 +174,7 @@ sub download
 		}
 
 		if (! -d "$target") {
-			system("mkdir", "-p", "$target/");
+			make_path($target);
 		}
 
 		if (! open TMPDLS, "find $mirror -follow -name $filename 2>/dev/null |") {
@@ -228,7 +245,7 @@ sub download
 	};
 
 	unlink "$target/$filename";
-	system("mv", "$target/$filename.dl", "$target/$filename");
+	move("$target/$filename.dl", "$target/$filename");
 	cleanup();
 }
 
@@ -258,6 +275,8 @@ foreach my $mirror (@ARGV) {
 		push @mirrors, "https://ftp.debian.org/debian/$1";
 		push @mirrors, "https://mirror.leaseweb.com/debian/$1";
 		push @mirrors, "https://mirror.netcologne.de/debian/$1";
+		push @mirrors, "https://mirrors.tuna.tsinghua.edu.cn/debian/$1";
+		push @mirrors, "https://mirrors.ustc.edu.cn/debian/$1"
 	} elsif ($mirror =~ /^\@APACHE\/(.+)$/) {
 		push @mirrors, "https://mirrors.tencent.com/apache/$1";
 		push @mirrors, "https://mirrors.aliyun.com/apache/$1";
@@ -277,12 +296,13 @@ foreach my $mirror (@ARGV) {
 		my $dir = $1;
 		my $i = 0;
 		# replace the 2nd '/' with '@' for jsDelivr mirror
-		push @mirrors, "https://cdn.jsdelivr.net/gh/". $dir =~ s{\/}{++$i == 2 ? '@' : $&}ger;
+		push @mirrors, "https://fastly.jsdelivr.net/gh/". $dir =~ s{\/}{++$i == 2 ? '@' : $&}ger;
+		push @mirrors, "https://raw.gitmirror.com/$1";
 		push @mirrors, "https://raw.sevencdn.com/$dir";
 		push @mirrors, "https://raw.fastgit.org/$dir";
 		# give github a few more tries (different mirrors)
 		for (1 .. 5) {
-			push @mirrors, "https://raw.githubusercontent.com/$dir";
+			push @mirrors, "https://raw.githubusercontent.com/$1";
 		}
 	} elsif ($mirror =~ /^\@GNU\/(.+)$/) {
 		push @mirrors, "https://mirrors.tencent.com/gnu/$1";
@@ -345,6 +365,7 @@ foreach my $mirror (@ARGV) {
 	}
 }
 
+# push @mirrors, 'https://mirror01.download.immortalwrt.eu.org';
 push @mirrors, 'https://mirror2.immortalwrt.org/sources';
 push @mirrors, 'https://mirror.immortalwrt.org/sources';
 push @mirrors, 'https://sources-cdn.immortalwrt.org';

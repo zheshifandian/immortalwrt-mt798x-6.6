@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=uboot-envtools
 PKG_DISTNAME:=u-boot
-PKG_VERSION:=2023.04
+PKG_VERSION:=2024.10
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_DISTNAME)-$(PKG_VERSION).tar.bz2
@@ -17,7 +17,7 @@ PKG_SOURCE_URL:= \
     https://ftp.denx.de/pub/u-boot \
     https://mirror.cyberbits.eu/u-boot \
     ftp://ftp.denx.de/pub/u-boot
-PKG_HASH:=e31cac91545ff41b71cec5d8c22afd695645cd6e2a442ccdacacd60534069341
+PKG_HASH:=b28daf4ac17e43156363078bf510297584137f6df50fced9b12df34f61a92fb0
 PKG_SOURCE_SUBDIR:=$(PKG_DISTNAME)-$(PKG_VERSION)
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_DISTNAME)-$(PKG_VERSION)
 
@@ -37,7 +37,7 @@ define Package/uboot-envtools
   CATEGORY:=Utilities
   SUBMENU:=Boot Loaders
   TITLE:=read/modify U-Boot bootloader environment
-  URL:=http://www.denx.de/wiki/U-Boot
+  URL:=https://www.denx.de/wiki/U-Boot
 endef
 
 define Package/uboot-envtools/description
@@ -68,18 +68,12 @@ define Package/uboot-envtools/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/tools/env/fw_printenv $(1)/usr/sbin
 	$(LN) fw_printenv $(1)/usr/sbin/fw_setenv
-	$(INSTALL_BIN) ./files/fw_printsys $(1)/usr/sbin
-	$(INSTALL_BIN) ./files/fw_setsys $(1)/usr/sbin
 	$(INSTALL_DIR) $(1)/lib
 	$(INSTALL_DATA) ./files/uboot-envtools.sh $(1)/lib
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(if $(wildcard ./files/$(BOARD)_$(SUBTARGET)), \
-		$(INSTALL_DATA) ./files/$(BOARD)_$(SUBTARGET) \
-		$(1)/etc/uci-defaults/30_uboot-envtools, \
 		$(if $(wildcard ./files/$(BOARD)), \
 			$(INSTALL_DATA) ./files/$(BOARD) \
 			$(1)/etc/uci-defaults/30_uboot-envtools \
-		) \
 	)
 endef
 

@@ -12,9 +12,9 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_URL=$(PROJECT_GIT)/project/mdnsd.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_DATE:=2024-03-04
-PKG_SOURCE_VERSION:=7c6759792502fa45ac1e38aa5644f8cf8f290894
-PKG_MIRROR_HASH:=7314ac31559b16d34d381f001037d9679c48778d2738948c8bd361aeab491c22
+PKG_SOURCE_DATE:=2024-09-17
+PKG_SOURCE_VERSION:=fbaca4b6f530d4b2f361ee15c266aa19a708242b
+PKG_MIRROR_HASH:=e3fc47a019ea54722b8d7dfc8158307a9fb4a9d18945a1a6794616e3b80d5d3b
 
 PKG_MAINTAINER:=John Crispin <john@phrozen.org>
 PKG_LICENSE:=LGPL-2.1
@@ -27,7 +27,7 @@ define Package/umdns
   SECTION:=net
   CATEGORY:=Network
   TITLE:=OpenWrt Multicast DNS Daemon
-  DEPENDS:=+libubox +libubus +libblobmsg-json
+  DEPENDS:=+libubox +libubus +libblobmsg-json +libudebug
 endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include

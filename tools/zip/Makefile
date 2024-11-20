@@ -37,4 +37,8 @@ define Host/Clean
 	rm -rf $(STAGING_DIR_HOST)/bin/zip
 endef
 
+define Host/Uninstall
+	-$(call Host/Compile/Default,uninstall)
+endef
+
 $(eval $(call HostBuild))

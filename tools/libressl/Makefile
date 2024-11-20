@@ -8,14 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libressl
-PKG_VERSION:=3.7.2
-PKG_HASH:=b06aa538fefc9c6b33c4db4931a09a5f52d9d2357219afcbff7d93fe12ebf6f7
+PKG_VERSION:=4.0.0
+PKG_HASH:=4d841955f0acc3dfc71d0e3dd35f283af461222350e26843fea9731c0246a1e4
 
 PKG_CPE_ID:=cpe:/a:openbsd:libressl
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://mirrors.tencent.com/OpenBSD/LibreSSL/ \
-	https://mirror.ox.ac.uk/pub/OpenBSD/LibreSSL \
+PKG_SOURCE_URL:=https://mirror.ox.ac.uk/pub/OpenBSD/LibreSSL \
 	http://ftp.jaist.ac.jp/pub/OpenBSD/LibreSSL \
 	https://ftp.openbsd.org/pub/OpenBSD/LibreSSL
 

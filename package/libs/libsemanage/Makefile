@@ -18,7 +18,7 @@ PKG_LICENSE_FILES:=COPYING
 PKG_CPE_ID:=cpe:/a:selinuxproject:libsemanage
 
 
-HOST_BUILD_DEPENDS:=libaudit/host libselinux/host bzip2/host
+HOST_BUILD_DEPENDS:=audit/host libselinux/host bzip2/host
 
 
 include $(INCLUDE_DIR)/package.mk
@@ -31,7 +31,7 @@ define Package/libsemanage
   DEPENDS:=+libaudit +libselinux +libbz2
   CATEGORY:=Libraries
   TITLE:=SELinux policy management library
-  URL:=http://selinuxproject.org/page/Main_Page
+  URL:=https://selinuxproject.org/page/Main_Page
 endef
 
 define Package/libsemanage/description

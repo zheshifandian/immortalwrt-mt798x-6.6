@@ -8,15 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=mtd-utils
-PKG_VERSION:=2.1.5
+PKG_VERSION:=2.2.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://infraroot.at/pub/mtd/
-PKG_HASH:=386e27fd121699b6b729bc2e8e04dda987b31cca6b16e12fb6cc6dcf26449f46
+PKG_HASH:=f7ae20b2eb79ee83441468f0b99d897024cd96ff853eea59106fb1952065c803
 
 PKG_INSTALL:=1
-PKG_FIXUP:=autoreconf
 
 PKG_FLAGS:=nonshared
 PKG_BUILD_FLAGS:=gc-sections
@@ -34,7 +33,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/mtd-utils/Default
   SECTION:=utils
   CATEGORY:=Utilities
-  URL:=http://www.linux-mtd.infradead.org/
+  URL:=https://www.linux-mtd.infradead.org/
   DEPENDS:=@NAND_SUPPORT
 endef
 
@@ -59,11 +58,12 @@ endef
 MAKE_FLAGS += LDLIBS+="$(LIBGCC_S)"
 
 CONFIGURE_ARGS += \
-	--disable-tests \
+	--enable-tests \
 	--without-crypto \
 	--without-xattr \
 	--without-zstd \
-	--without-lzo
+	--without-lzo \
+	--without-zlib
 
 define Package/ubi-utils/install
 	$(INSTALL_DIR) $(1)/usr/sbin
@@ -76,7 +76,8 @@ endef
 define Package/nand-utils/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) \
-	$(PKG_INSTALL_DIR)/usr/sbin/{flash_erase,nanddump,nandwrite,nandtest,mtdinfo} $(1)/usr/sbin/
+	$(PKG_INSTALL_DIR)/usr/sbin/{flash_erase,nanddump,nandwrite,nandtest,mtdinfo} \
+	$(PKG_INSTALL_DIR)/usr/lib/mtd-utils/nandbiterrs $(1)/usr/sbin/
 endef
 
 $(eval $(call BuildPackage,ubi-utils))

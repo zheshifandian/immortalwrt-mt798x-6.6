@@ -30,7 +30,7 @@ define Package/libnfnetlink
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=A low-level library for netfilter related kernel/userspace communication
-  URL:=http://netfilter.org/projects/libnfnetlink/
+  URL:=https://netfilter.org/projects/libnfnetlink/
   ABI_VERSION:=0
 endef
 

@@ -39,9 +39,11 @@ endif
 define Package/base-files
   SECTION:=base
   CATEGORY:=Base system
-  DEPENDS:=+netifd +libc +jsonfilter +SIGNED_PACKAGES:usign +SIGNED_PACKAGES:openwrt-keyring +NAND_SUPPORT:ubi-utils +fstools +fwtool
+  DEPENDS:=+netifd +libc +jsonfilter \
+  	+SIGNED_PACKAGES:usign +SIGNED_PACKAGES:openwrt-keyring \
+	+NAND_SUPPORT:ubi-utils +fstools +fwtool
   TITLE:=Base filesystem for OpenWrt
-  URL:=http://openwrt.org/
+  URL:=https://openwrt.org/
   VERSION:=$(PKG_RELEASE)-$(REVISION)
 endef
 
@@ -138,18 +140,17 @@ ifeq ($(CONFIG_NAND_SUPPORT),)
   endef
 endif
 
-ifeq ($(CONFIG_EMMC_SUPPORT),)
-  define Package/base-files/emmc-support
-	rm -f $(1)/lib/upgrade/emmc.sh
-  endef
-endif
-
 ifeq ($(CONFIG_LEGACY_SDCARD_SUPPORT),)
   define Package/base-files/legacy-sdcard-support
 	rm -f $(1)/lib/upgrade/legacy-sdcard.sh
   endef
 endif
 
+ifeq ($(CONFIG_EMMC_SUPPORT),)
+  define Package/base-files/emmc-support
+	rm -f $(1)/lib/upgrade/emmc.sh
+  endef
+endif
 
 define Package/base-files/install
 	$(CP) ./files/* $(1)/
@@ -239,6 +240,9 @@ endif
 
 	$(if $(CONFIG_TARGET_PREINIT_DISABLE_FAILSAFE), \
 		rm -f $(1)/etc/banner.failsafe,)
+
+	$(if $(CONFIG_PACKAGE_wifi-profile), \
+		rm -f $(1)/sbin/wifi)
 endef
 
 ifneq ($(DUMP),1)

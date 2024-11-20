@@ -4,10 +4,10 @@ PKG_NAME:=ustream-ssl
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/ustream-ssl.git
-PKG_SOURCE_DATE:=2023-02-25
-PKG_SOURCE_VERSION:=498f6e268d4d2b0ad33b430f4ba1abe397d31496
-PKG_MIRROR_HASH:=a201d065dd613e30886c9f13a0851cec79538192cfe591b6f8ecd88724d55fb1
+PKG_SOURCE_URL=https://github.com/openwrt/ustream-ssl.git
+PKG_SOURCE_DATE:=2024-07-28
+PKG_SOURCE_VERSION:=99bd3d2b167ccdffb6de072d02c380cb37b23e33
+PKG_MIRROR_HASH:=9165ce1b05e7bf5ab2cd8450da30c980f1996c9d3a97c4ed2a573b282467b839
 CMAKE_INSTALL:=1
 
 PKG_LICENSE:=ISC
@@ -31,6 +31,7 @@ define Package/libustream-openssl
   TITLE += (openssl)
   DEPENDS += +PACKAGE_libustream-openssl:libopenssl
   VARIANT:=openssl
+  PROVIDES:=libustream-ssl
 endef
 
 define Package/libustream-wolfssl
@@ -39,6 +40,7 @@ define Package/libustream-wolfssl
   DEPENDS += +PACKAGE_libustream-wolfssl:libwolfssl
   CONFLICTS := libustream-openssl
   VARIANT:=wolfssl
+  PROVIDES:=libustream-ssl
 endef
 
 define Package/libustream-mbedtls
@@ -47,6 +49,7 @@ define Package/libustream-mbedtls
   DEPENDS += +PACKAGE_libustream-mbedtls:libmbedtls
   CONFLICTS := libustream-openssl libustream-wolfssl
   VARIANT:=mbedtls
+  PROVIDES:=libustream-ssl
   DEFAULT_VARIANT:=1
 endef
 

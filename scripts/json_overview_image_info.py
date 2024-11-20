@@ -55,6 +55,7 @@ if output:
             "target/linux/",
             "val.DEFAULT_PACKAGES",
             "val.ARCH_PACKAGES",
+            "V=s",
         ],
         stdout=PIPE,
         stderr=PIPE,

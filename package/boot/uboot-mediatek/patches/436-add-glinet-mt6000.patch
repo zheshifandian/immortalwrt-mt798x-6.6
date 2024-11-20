@@ -138,7 +138,7 @@
 +};
 --- /dev/null
 +++ b/configs/mt7986a_glinet_gl-mt6000_defconfig
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,106 @@
 +CONFIG_ARM=y
 +CONFIG_SYS_HAS_NONCACHED_MEMORY=y
 +CONFIG_POSITION_INDEPENDENT=y
@@ -149,7 +149,6 @@
 +CONFIG_ENV_SIZE=0x80000
 +CONFIG_ENV_OFFSET=0x400000
 +CONFIG_DEFAULT_DEVICE_TREE="mt7986a-glinet-gl-mt6000"
-+CONFIG_SYS_PROMPT="MT7986> "
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7986=y
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
@@ -167,8 +166,10 @@
 +CONFIG_LOG=y
 +CONFIG_BOARD_LATE_INIT=y
 +CONFIG_HUSH_PARSER=y
++CONFIG_SYS_PROMPT="MT7986> "
 +CONFIG_CMD_CPU=y
 +CONFIG_CMD_LICENSE=y
++# CONFIG_CMD_BOOTEFI_BOOTMGR is not set
 +CONFIG_CMD_BOOTMENU=y
 +CONFIG_CMD_ASKENV=y
 +CONFIG_CMD_ERASEENV=y
@@ -246,14 +247,14 @@
 +CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
 +++ b/glinet_gl-mt6000_env
-@@ -0,0 +1,25 @@
+@@ -0,0 +1,24 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254
 +loadaddr=0x46000000
 +bootdelay=3
-+bootfile_bl2=immortalwrt-mediatek-filogic-glinet_gl-mt6000-preloader.bin
-+bootfile_fip=immortalwrt-mediatek-filogic-glinet_gl-mt6000-bl31-uboot.fip
-+bootfile_firmware=immortalwrt-mediatek-filogic-glinet_gl-mt6000-squashfs-factory.bin
++bootfile_bl2=openwrt-mediatek-filogic-glinet_gl-mt6000-preloader.bin
++bootfile_fip=openwrt-mediatek-filogic-glinet_gl-mt6000-bl31-uboot.fip
++bootfile_firmware=openwrt-mediatek-filogic-glinet_gl-mt6000-squashfs-factory.bin
 +bootmenu_confirm_return=askenv - Press ENTER to return to menu ; bootmenu 60
 +bootmenu_title=      *** U-Boot Boot Menu for GL-iNet GL-MT6000 ***
 +bootmenu_0=Startup system (Default).=run boot_system
@@ -263,8 +264,7 @@
 +bootmenu_4=Reboot.=reset
 +bootmenu_5=Reset all settings to factory defaults.=run reset_factory ; reset
 +filesize_to_blk=setexpr cnt $filesize + 0x1ff && setexpr cnt $cnt / 0x200
-+mmc_read_kernel=mmc read $loadaddr $part_addr 0x100 && imszb $loadaddr image_size && test 0x$image_size -le 0x$part_size && mmc read $loadaddr $part_addr $image_size
-+boot_system=part start mmc 0 kernel part_addr && part size mmc 0 kernel part_size && run mmc_read_kernel && bootm
++boot_system=part start mmc 0 kernel part_addr && part size mmc 0 kernel part_size && mmc read $loadaddr $part_addr $part_size && bootm
 +boot_tftp_firmware=tftpboot $loadaddr $bootfile_firmware && run emmc_write_firmware
 +boot_tftp_write_fip=tftpboot $loadaddr $bootfile_fip && run emmc_write_fip
 +boot_tftp_write_bl2=tftpboot $loadaddr $bootfile_bl2 && run emmc_write_bl2

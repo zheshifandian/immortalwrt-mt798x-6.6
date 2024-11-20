@@ -30,19 +30,35 @@ PKG_SOURCE_URL:=@GNU/gcc/gcc-$(PKG_VERSION)
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_CPE_ID:=cpe:/a:gnu:gcc
 
-ifeq ($(PKG_VERSION),11.3.0)
-  PKG_HASH:=b47cf2818691f5b1e21df2bb38c795fac2cfbd640ede2d0a5e1c89e338a3ac39
+ifeq ($(PKG_VERSION),8.5.0)
+  PKG_HASH:=d308841a511bb830a6100397b0042db24ce11f642dab6ea6ee44842e5325ed50
 endif
 
-ifeq ($(PKG_VERSION),12.3.0)
-  PKG_HASH:=949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b
+ifeq ($(PKG_VERSION),9.5.0)
+  PKG_HASH:=27769f64ef1d4cd5e2be8682c0c93f9887983e6cfd1a927ce5a0a2915a95cf8f
 endif
 
-ifeq ($(PKG_VERSION),13.1.0)
-  PKG_HASH:=61d684f0aa5e76ac6585ad8898a2427aade8979ed5e7f85492286c4dfc13ee86
+ifeq ($(PKG_VERSION),10.5.0)
+  PKG_HASH:=25109543fdf46f397c347b5d8b7a2c7e5694a5a51cce4b9c6e1ea8a71ca307c1
 endif
 
-PATCH_DIR=../patches-$(GCC_MAJOR_VERSION).x
+ifeq ($(PKG_VERSION),11.5.0)
+  PKG_HASH:=a6e21868ead545cf87f0c01f84276e4b5281d672098591c1c896241f09363478
+endif
+
+ifeq ($(PKG_VERSION),12.4.0)
+  PKG_HASH:=704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175
+endif
+
+ifeq ($(PKG_VERSION),13.3.0)
+  PKG_HASH:=0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083
+endif
+
+ifeq ($(PKG_VERSION),14.2.0)
+  PKG_HASH:=a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9
+endif
+
+PATCH_DIR=../patches/$(PKG_VERSION)
 
 BUGURL=http://bugs.openwrt.org/
 PKGVERSION=OpenWrt GCC $(PKG_VERSION) $(REVISION)
@@ -191,8 +207,7 @@ define Host/SetToolchainInfo
 	$(SED) 's,GCC_VERSION=.*,GCC_VERSION=$(GCC_VERSION),' $(TOOLCHAIN_DIR)/info.mk
 endef
 
-
-ifeq ($(GCC_MAJOR_VERSION),11)
+ifeq ($(shell [ $(GCC_MAJOR_VERSION) -le 11 ] && echo true), true)
 	GCC_VERSION_FILE:=gcc/version.c
 else
 	GCC_VERSION_FILE:=gcc/genversion.cc

@@ -64,13 +64,16 @@ DEFAULT_PACKAGES.router:=\
 DEFAULT_PACKAGES.tweak:=\
 	block-mount \
 	default-settings-chn \
+	kmod-ipt-raw \
 	kmod-nf-nathelper \
 	kmod-nf-nathelper-extra \
 	luci \
+	luci-app-filetransfer \
+  luci-app-opkg \
 	luci-compat \
 	luci-lib-base \
-	luci-lib-ipkg \
-	luci-app-opkg
+	luci-lib-fs \
+	luci-lib-ipkg
 
 ifneq ($(DUMP),)
   all: dumpinfo

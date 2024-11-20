@@ -27,6 +27,7 @@ CFLAGS=""
 TOOLCHAIN="."
 
 LIBC_TYPE=""
+GCC_VERSION=""
 
 
 # Library specs
@@ -203,6 +204,19 @@ find_bins() {
 	fi
 
 	return 1
+}
+
+find_gcc_version() {
+	if [ -f $TOOLCHAIN/info.mk ]; then
+		GCC_VERSION=$(grep GCC_VERSION $TOOLCHAIN/info.mk | sed 's/GCC_VERSION=//')
+		return 0
+	fi
+
+	echo "Warning! Can't find info.mk, trying to detect with alternative way."
+
+	# Very fragile detection
+	GCC_VERSION=$(find $TOOLCHAIN/bin | grep -oE "gcc-[0-9]+\.[0-9]+\.[0-9]+$" | \
+		head -1 | sed 's/gcc-//')
 }
 
 
@@ -389,6 +403,13 @@ print_config() {
 		return 1
 	fi
 
+	if [ -n "$GCC_VERSION" ]; then
+		echo "CONFIG_EXTERNAL_GCC_VERSION=\"$GCC_VERSION\"" >> "$config"
+	else
+		echo "Can't detect GCC version. Aborting!" >&2
+		return 1
+	fi
+
 	local lib
 	for lib in C RT PTHREAD GCC STDCPP SSP GFORTRAN GOMP ATOMIC QUADMATH ASAN TSAN LSAN UBSAN; do
 		local file
@@ -570,6 +591,7 @@ while [ -n "$1" ]; do
 		--config)
 			if probe_cc; then
 				probe_libc
+				find_gcc_version
 				print_config "$1"
 				exit $?
 			fi

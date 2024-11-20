@@ -228,10 +228,10 @@ diff -u -r a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrac
  		nat->masq_index = out->ifindex;
  
 +/* RFC 4787 - 4.2.2.  Port Parity
-+   i.e., an even port will be mapped to an even port, and an odd port will be mapped to an odd port.*/
-+extern unsigned int nf_conntrack_nat_mode;
++   i.e., an even port will be mapped to an even port, and an odd port will be mapped to an odd port.
++*/
 +#define CHECK_PORT_PARITY(a, b) ((a%2)==(b%2))
-+       if (nf_conntrack_nat_mode != 0 /* nat_mode == full cone */
++       if (range->min_addr.ip != 0 /* nat_mode == full cone */
 +           && (nfct_help(ct) == NULL || nfct_help(ct)->helper == NULL)
 +           && nf_ct_protonum(ct) == IPPROTO_UDP) {
 +               unsigned int ret;

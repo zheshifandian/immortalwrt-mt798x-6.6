@@ -39,7 +39,7 @@ switch_to_ramfs() {
 	for binary in \
 		/bin/busybox /bin/ash /bin/sh /bin/mount /bin/umount	\
 		pivot_root mount_root reboot sync kill sleep		\
-		md5sum hexdump cat zcat dd tar gzip			\
+		md5sum hexdump cat zcat bzcat dd tar gzip			\
 		ls basename find cp mv rm mkdir rmdir mknod touch chmod \
 		'[' printf wc grep awk sed cut sort tail		\
 		mtd partx losetup mkfs.ext4 nandwrite flash_erase	\
@@ -53,8 +53,8 @@ switch_to_ramfs() {
 		local file="$(command -v "$binary" 2>/dev/null)"
 		[ -n "$file" ] && install_bin "$file"
 	done
-	install_file /etc/resolv.conf /lib/*.sh /lib/functions/*.sh	\
-		/lib/upgrade/*.sh /lib/upgrade/do_stage2 		\
+	install_file /etc/resolv.conf /lib/*.sh /lib/functions/*.sh		\
+		/lib/upgrade/*.sh /lib/upgrade/do_stage2		\
 		/usr/share/libubox/jshn.sh /usr/sbin/fw_setenv		\
 		/etc/fw_env.config $RAMFS_COPY_DATA
 
@@ -155,10 +155,10 @@ killall -9 dropbear 2>/dev/null
 killall -9 ash 2>/dev/null
 
 kill_remaining TERM
-sleep 4
+sleep 3
 kill_remaining KILL 1
 
-sleep 6
+sleep 1
 
 echo 3 > /proc/sys/vm/drop_caches
 

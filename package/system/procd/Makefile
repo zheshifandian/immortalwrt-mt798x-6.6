@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=procd
-PKG_RELEASE:=2
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/procd.git
-PKG_MIRROR_HASH:=a7e42525ae65eb1342e593a714e88bc59e46467cbb5a7fd7d7aca4a9815b7c0d
-PKG_SOURCE_DATE:=2023-06-25
-PKG_SOURCE_VERSION:=2db836553e8fc318143b38dbc6e12b8625cf5c33
+PKG_SOURCE_URL=https://github.com/openwrt/procd.git
+PKG_MIRROR_HASH:=56c5f71da3f68036c63ae59d01992785e74027726da5973297895985cd27c215
+PKG_SOURCE_DATE:=2024-11-13
+PKG_SOURCE_VERSION:=7330fa55c5211eb7b3c675d1c7b8281b69b53553
 CMAKE_INSTALL:=1
 
 PKG_LICENSE:=GPL-2.0
@@ -40,7 +40,7 @@ CMAKE_OPTIONS += -DEARLY_PATH="$(TARGET_INIT_PATH)"
 define Package/procd/Default
   SECTION:=base
   CATEGORY:=Base system
-  DEPENDS:=+ubusd +ubus +libjson-script +ubox +libubox \
+  DEPENDS:=+ubusd +ubus +libjson-script +ubox +libubox +libudebug \
 	  +libubus +libblobmsg-json +libjson-c +jshn
   TITLE:=OpenWrt system process manager
   USERID:=:dialout=20 :audio=29
@@ -50,6 +50,7 @@ define Package/procd
   $(call Package/procd/Default)
   VARIANT:=default
   CONFLICTS:=procd-selinux
+  DEFAULT:=y if SELINUX
 endef
 
 define Package/procd-selinux
@@ -58,6 +59,7 @@ define Package/procd-selinux
   TITLE += with SELinux support
   PROVIDES:=procd
   VARIANT:=selinux
+  DEFAULT:=y if !SELINUX
 endef
 
 define Package/procd-ujail
@@ -66,6 +68,7 @@ define Package/procd-ujail
   DEPENDS:=@KERNEL_NAMESPACES +@KERNEL_UTS_NS +@KERNEL_IPC_NS +@KERNEL_PID_NS \
 	  +libubox +libubus +libuci +libblobmsg-json
   TITLE:=OpenWrt process jail helper
+  DEFAULT:=y if SECCOMP
 endef
 
 define Package/procd-seccomp

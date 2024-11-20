@@ -91,7 +91,7 @@ define Package/policycoreutils/Default
   SECTION:=utils
   CATEGORY:=Utilities
   TITLE:=SELinux policy utility
-  URL:=http://selinuxproject.org/page/Main_Page
+  URL:=https://selinuxproject.org/page/Main_Page
 endef
 
 define Package/policycoreutils

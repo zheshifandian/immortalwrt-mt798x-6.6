@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=f2fs-tools
 PKG_VERSION:=1.16.0
-PKG_RELEASE:=1
+PKG_RELEASE:=3
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs-tools.git/snapshot/
@@ -31,7 +31,7 @@ define Package/f2fs-tools/Default
   CATEGORY:=Utilities
   SUBMENU:=Filesystem
   DEPENDS:=+libf2fs
-  URL:=http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git
+  URL:=https://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git
   VARIANT:=default
 endef
 
@@ -40,7 +40,7 @@ define Package/f2fs-tools/SELinux
   CATEGORY:=Utilities
   SUBMENU:=Filesystem
   DEPENDS:=+libf2fs-selinux +libselinux
-  URL:=http://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git
+  URL:=https://git.kernel.org/cgit/linux/kernel/git/jaegeuk/f2fs-tools.git
   VARIANT:=selinux
 endef
 
@@ -133,10 +133,11 @@ Package/mkf2fs-selinux/install = $(Package/mkf2fs/install)
 define Package/f2fsck/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/sbin/fsck.f2fs $(1)/usr/sbin
-	ln -s /usr/sbin/fsck.f2fs $(1)/usr/sbin/defrag.f2fs
-	ln -s /usr/sbin/fsck.f2fs $(1)/usr/sbin/dump.f2fs
-	ln -s /usr/sbin/fsck.f2fs $(1)/usr/sbin/sload.f2fs
-	ln -s /usr/sbin/fsck.f2fs $(1)/usr/sbin/resize.f2fs
+	$(LN) ../sbin/fsck.f2fs $(1)/usr/sbin/defrag.f2fs
+	$(LN) ../sbin/fsck.f2fs $(1)/usr/sbin/dump.f2fs
+	$(LN) ../sbin/fsck.f2fs $(1)/usr/sbin/sload.f2fs
+	$(LN) ../sbin/fsck.f2fs $(1)/usr/sbin/resize.f2fs
+	$(LN) ../sbin/fsck.f2fs $(1)/usr/sbin/f2fslabel
 endef
 
 Package/f2fsck-selinux/install = $(Package/f2fsck/install)

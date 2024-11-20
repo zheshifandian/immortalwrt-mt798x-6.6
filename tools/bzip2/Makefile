@@ -22,6 +22,7 @@ PKG_CPE_ID:=cpe:/a:bzip:bzip2
 HOST_BUILD_PARALLEL:=1
 
 include $(INCLUDE_DIR)/host-build.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 HOSTCC := $(HOSTCC_NOCACHE)
 HOST_CFLAGS += $(HOST_FPIC)

@@ -60,4 +60,5 @@ else
   define MESSAGE
     printf "%s\n" "$(1)"
   endef
+  ERROR_MESSAGE=$(MESSAGE)
 endif

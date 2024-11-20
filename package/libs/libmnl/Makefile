@@ -30,7 +30,7 @@ define Package/libmnl
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Minimalistic user-space library for Netlink
-  URL:=http://www.netfilter.org/projects/libmnl/
+  URL:=https://www.netfilter.org/projects/libmnl/
   ABI_VERSION:=0
 endef
 

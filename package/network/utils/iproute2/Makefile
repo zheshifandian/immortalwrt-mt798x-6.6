@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=iproute2
-PKG_VERSION:=6.3.0
+PKG_VERSION:=6.11.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/linux/utils/net/iproute2
-PKG_HASH:=dfb2a98db96e7a653cffc6693335a1a466e29a34b6ac528be48f35e1d2766732
+PKG_HASH:=1f795398a04aeaacd06a8f6ace2cfd913c33fa5953ca99daae83bb5c534611c3
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_DEPENDS:=iptables
 PKG_LICENSE:=GPL-2.0
@@ -28,7 +28,7 @@ include $(INCLUDE_DIR)/nls.mk
 define Package/iproute2/Default
   SECTION:=net
   CATEGORY:=Network
-  URL:=http://www.linuxfoundation.org/collaborate/workgroups/networking/iproute2
+  URL:=https://www.linuxfoundation.org/collaborate/workgroups/networking/iproute2
   SUBMENU:=Routing and Redirection
   MAINTAINER:=Russell Senior <russell@personaltelco.net>
 endef
@@ -77,14 +77,7 @@ $(call Package/iproute2/Default)
   VARIANT:=tcfull
   PROVIDES:=tc
   ALTERNATIVES:=400:/sbin/tc:/usr/libexec/tc-full
-  DEPENDS:=+kmod-sched-core +(PACKAGE_devlink||PACKAGE_rdma):libmnl +libbpf +libxtables +tc-mod-iptables
-endef
-
-define Package/tc-mod-iptables
-$(call Package/iproute2/Default)
-  TITLE:=Traffic control module - iptables action
-  VARIANT:=tcfull
-  DEPENDS:=+libxtables +libbpf
+  DEPENDS:=+kmod-sched-core +(PACKAGE_devlink||PACKAGE_rdma):libmnl +libbpf +libxtables
 endef
 
 define Package/genl
@@ -102,7 +95,7 @@ endef
 define Package/ss
 $(call Package/iproute2/Default)
   TITLE:=Socket statistics utility
-  DEPENDS:=+libnl-tiny +(PACKAGE_devlink||PACKAGE_rdma):libmnl +kmod-netlink-diag
+  DEPENDS:=+libnl-tiny +(PACKAGE_devlink||PACKAGE_rdma):libmnl +libbpf +kmod-netlink-diag
 endef
 
 define Package/nstat
@@ -173,8 +166,9 @@ define Build/Configure
 		> $(PKG_BUILD_DIR)/include/SNAPSHOT.h
 endef
 
-TARGET_LDFLAGS += -Wl,--as-needed
+TARGET_CFLAGS += -Wno-format-nonliteral
 TARGET_CPPFLAGS += -I$(STAGING_DIR)/usr/include/libnl-tiny
+TARGET_LDFLAGS += -Wl,--as-needed
 
 MAKE_FLAGS += \
 	KERNEL_INCLUDE="$(LINUX_DIR)/include/uapi" \
@@ -232,11 +226,6 @@ define Package/tc-full/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/tc/tc $(1)/usr/libexec/tc-full
 endef
 
-define Package/tc-mod-iptables/install
-	$(INSTALL_DIR) $(1)/usr/lib/tc
-	$(CP) $(PKG_BUILD_DIR)/tc/m_xt.so $(1)/usr/lib/tc
-endef
-
 define Package/genl/install
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/genl/genl $(1)/usr/sbin/
@@ -269,9 +258,6 @@ endef
 
 $(eval $(call BuildPackage,ip-tiny))
 $(eval $(call BuildPackage,ip-full))
-# build tc-mod-iptables before its dependents, to avoid
-# spurious rebuilds when building multiple variants.
-$(eval $(call BuildPackage,tc-mod-iptables))
 $(eval $(call BuildPackage,tc-tiny))
 $(eval $(call BuildPackage,tc-bpf))
 $(eval $(call BuildPackage,tc-full))
