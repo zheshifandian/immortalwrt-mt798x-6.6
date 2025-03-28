@@ -13,7 +13,7 @@
  };
  
  static inline struct f_rndis *func_to_rndis(struct usb_function *f)
-@@ -92,6 +98,7 @@ static inline struct f_rndis *func_to_rndis(struct usb_function *f)
+@@ -105,6 +111,7 @@ static unsigned int bitrate(struct usb_g
  #define RNDIS_STATUS_INTERVAL_MS	32
  #define STATUS_BYTECOUNT		8	/* 8 bytes data */
  
@@ -21,7 +21,7 @@
  
  /* interface descriptor: */
  
-@@ -102,9 +109,9 @@ static struct usb_interface_descriptor rndis_control_intf = {
+@@ -115,9 +122,9 @@ static struct usb_interface_descriptor r
  	/* .bInterfaceNumber = DYNAMIC */
  	/* status endpoint is optional; this could be patched later */
  	.bNumEndpoints =	1,
@@ -34,7 +34,7 @@
  	/* .iInterface = DYNAMIC */
  };
  
-@@ -162,10 +169,10 @@ rndis_iad_descriptor = {
+@@ -175,10 +182,10 @@ rndis_iad_descriptor = {
  	.bDescriptorType =	USB_DT_INTERFACE_ASSOCIATION,
  
  	.bFirstInterface =	0, /* XXX, hardcoded */
@@ -49,7 +49,7 @@
  	/* .iFunction = DYNAMIC */
  };
  
-@@ -352,20 +359,104 @@ static struct usb_gadget_strings *rndis_strings[] = {
+@@ -365,20 +372,104 @@ static struct usb_gadget_strings *rndis_
  	NULL,
  };
  
@@ -119,17 +119,17 @@
 +				alloc_skb(params->max_in_size_per_xfer, GFP_ATOMIC);
 +			if (!rndis->prepared_tx_skb)
 +				goto err;
- 
--	if (!skb)
--		return NULL;
++
 +			rndis->prepared_tx_skb->dev = rndis->netdev;
 +			rndis->prepared_tx_skb_count = 0;
- 
++
 +			/* Start the timer. */
 +			hrtimer_start(&rndis->task_timer, TX_TIMEOUT_NSECS,
 +				      HRTIMER_MODE_REL_SOFT);
 +		}
-+
+ 
+-	if (!skb)
+-		return NULL;
 +		/*
 +		 * Add the new data to the skb
 +		 * PacketAlignmentFactor is 0, no need to add padding
@@ -148,7 +148,7 @@
 +		skb2 = package_for_tx(rndis);
 +	}
 +	return skb2;
-+
+ 
 +err:
  	skb2 = skb_realloc_headroom(skb, sizeof(struct rndis_packet_msg_type));
  	rndis_add_hdr(skb2);
@@ -158,7 +158,7 @@
  	return skb2;
  }
  
-@@ -546,6 +637,7 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+@@ -559,6 +650,7 @@ static int rndis_set_alt(struct usb_func
  
  		if (rndis->port.in_ep->enabled) {
  			DBG(cdev, "reset rndis\n");
@@ -166,7 +166,7 @@
  			gether_disconnect(&rndis->port);
  		}
  
-@@ -582,8 +674,9 @@ static int rndis_set_alt(struct usb_function *f, unsigned intf, unsigned alt)
+@@ -595,8 +687,9 @@ static int rndis_set_alt(struct usb_func
  		net = gether_connect(&rndis->port);
  		if (IS_ERR(net))
  			return PTR_ERR(net);
@@ -177,7 +177,7 @@
  				&rndis->port.cdc_filter);
  	} else
  		goto fail;
-@@ -604,6 +697,7 @@ static void rndis_disable(struct usb_function *f)
+@@ -617,6 +710,7 @@ static void rndis_disable(struct usb_fun
  	DBG(cdev, "rndis deactivated\n");
  
  	rndis_uninit(rndis->params);
@@ -185,7 +185,7 @@
  	gether_disconnect(&rndis->port);
  
  	usb_ep_disable(rndis->notify);
-@@ -793,6 +887,9 @@ rndis_bind(struct usb_configuration *c, struct usb_function *f)
+@@ -806,6 +900,9 @@ rndis_bind(struct usb_configuration *c,
  		goto fail_free_descs;
  	}
  
@@ -195,7 +195,7 @@
  	/* NOTE:  all that is done without knowing or caring about
  	 * the network link ... which is unavailable to this code
  	 * until we're activated via set_alt().
-@@ -956,6 +1053,8 @@ static void rndis_unbind(struct usb_configuration *c, struct usb_function *f)
+@@ -971,6 +1068,8 @@ static void rndis_unbind(struct usb_conf
  {
  	struct f_rndis		*rndis = func_to_rndis(f);
  
@@ -204,7 +204,6 @@
  	kfree(f->os_desc_table);
  	f->os_desc_n = 0;
  	usb_free_all_descriptors(f);
- 	
 --- a/drivers/usb/gadget/function/rndis.c
 +++ b/drivers/usb/gadget/function/rndis.c
 @@ -39,6 +39,8 @@
@@ -216,7 +215,7 @@
  
  /* The driver for your USB chip needs to support ep0 OUT to work with
   * RNDIS, plus all three CDC Ethernet endpoints (interrupt not optional).
-@@ -574,12 +576,12 @@ static int rndis_init_response(struct rndis_params *params,
+@@ -574,12 +576,12 @@ static int rndis_init_response(struct rn
  	resp->MinorVersion = cpu_to_le32(RNDIS_MINOR_VERSION);
  	resp->DeviceFlags = cpu_to_le32(RNDIS_DF_CONNECTIONLESS);
  	resp->Medium = cpu_to_le32(RNDIS_MEDIUM_802_3);
@@ -242,7 +241,7 @@
  	__le32 *tmp;
  
  	if (!buf)
-@@ -813,7 +815,12 @@ int rndis_msg_parser(struct rndis_params *params, u8 *buf)
+@@ -813,7 +815,12 @@ int rndis_msg_parser(struct rndis_params
  	case RNDIS_MSG_INIT:
  		pr_debug("%s: RNDIS_MSG_INIT\n",
  			__func__);
@@ -255,7 +254,7 @@
  		return rndis_init_response(params, (rndis_init_msg_type *)buf);
  
  	case RNDIS_MSG_HALT:
-@@ -922,6 +929,8 @@ struct rndis_params *rndis_register(void (*resp_avail)(void *v), void *v)
+@@ -922,6 +929,8 @@ struct rndis_params *rndis_register(void
  	params->media_state = RNDIS_MEDIA_STATE_DISCONNECTED;
  	params->resp_avail = resp_avail;
  	params->v = v;
@@ -264,7 +263,7 @@
  	INIT_LIST_HEAD(&params->resp_queue);
  	spin_lock_init(&params->resp_lock);
  	pr_debug("%s: configNr = %d\n", __func__, i);
-@@ -954,8 +963,8 @@ void rndis_deregister(struct rndis_params *params)
+@@ -954,8 +963,8 @@ void rndis_deregister(struct rndis_param
  	rndis_put_nr(i);
  }
  EXPORT_SYMBOL_GPL(rndis_deregister);
@@ -275,11 +274,10 @@
  {
  	pr_debug("%s:\n", __func__);
  	if (!dev)
-@@ -965,7 +974,18 @@ int rndis_set_param_dev(struct rndis_params *params, struct net_device *dev,
+@@ -965,7 +974,18 @@ int rndis_set_param_dev(struct rndis_par
  
  	params->dev = dev;
  	params->filter = cdc_filter;
--
 +	params->max_out_size_per_xfer = (params->max_out_pkts_per_xfer *
 +					(dev->mtu
 +					+ sizeof(struct ethhdr)
@@ -287,7 +285,7 @@
 +					+ 22));
 +	port->is_fixed = true;
 +	port->fixed_out_len = params->max_out_size_per_xfer;
-+
+ 
 +	pr_debug("mtu %d, fixed_out_len %d\n", dev->mtu, port->fixed_out_len);
 +
 +	max_out_pkts_per_xfer = params->max_out_pkts_per_xfer;
@@ -413,7 +411,6 @@
  }
  EXPORT_SYMBOL_GPL(rndis_rm_hdr);
  
-
 --- a/drivers/usb/gadget/function/rndis.h
 +++ b/drivers/usb/gadget/function/rndis.h
 @@ -19,6 +19,9 @@
@@ -453,22 +450,3 @@
  void rndis_add_hdr(struct sk_buff *skb);
  int rndis_rm_hdr(struct gether *port, struct sk_buff *skb,
  			struct sk_buff_head *list);
--- 
-2.34.1
-
-
-^ permalink raw reply related	[flat|nested] 6+ messages in thread
-* Re: [PATCH] usb: gadget: rndis: add multi packages support for rndis
-  2024-03-06  5:49 [PATCH] usb: gadget: rndis: add multi packages support for rndis Surong Pang
-@ 2024-03-26  9:34 ` Greg KH
-  2024-03-26  9:36 ` Greg KH
-  1 sibling, 0 replies; 6+ messages in thread
-From: Greg KH @ 2024-03-26  9:34 UTC (permalink / raw)
-  To: Surong Pang; +Cc: linux-usb, linux-kernel, Orson.Zhai, Zhiyong.liu, Surong.Pang
-
-On Wed, Mar 06, 2024 at 01:49:49PM +0800, Surong Pang wrote:
-> As ncm, aggergate multi skb packages and transfer them at one URB.
-> In USB2.0, the network throughput can be improved from about 18MB/S
-> to 35MB/S.
-
-Why is rndis still being used?  It's 

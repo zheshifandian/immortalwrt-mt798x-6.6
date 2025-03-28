@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=make-ext4fs
 
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/make_ext4fs.git
+PKG_SOURCE_URL=https://github.com/openwrt/make_ext4fs.git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2020-01-05
 PKG_SOURCE_VERSION:=5c201be7d72aff735da27e17c29852e0cefe3e52

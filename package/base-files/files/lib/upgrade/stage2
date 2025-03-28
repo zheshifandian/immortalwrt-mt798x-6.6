@@ -156,11 +156,13 @@ killall -9 ash 2>/dev/null
 
 kill_remaining TERM
 sleep 4
-kill_remaining KILL 1
 
-sleep 6
+kill_remaining KILL 1
+sleep 2
 
 echo 3 > /proc/sys/vm/drop_caches
+
+rm -f /sys/fs/pstore/* 
 
 if [ -n "$IMAGE" ] && type 'platform_pre_upgrade' >/dev/null 2>/dev/null; then
 	platform_pre_upgrade "$IMAGE"

@@ -67,6 +67,10 @@ depends() {
 	return 0
 }
 
+running() {
+	return 1
+}
+
 ALL_HELP=""
 ALL_COMMANDS="boot shutdown depends"
 extra_command() {
@@ -100,6 +104,10 @@ service_triggers() {
 	return 0
 }
 
+service_data() {
+	return 0
+}
+
 service_running() {
 	local instance="${1:-*}"
 
@@ -115,6 +123,7 @@ extra_command "reload" "Reload configuration files (or restart if service does n
 extra_command "enable" "Enable service autostart"
 extra_command "disable" "Disable service autostart"
 extra_command "enabled" "Check if service is started on boot"
+extra_command "running" "Check if service is running"
 
 . "$initscript"
 

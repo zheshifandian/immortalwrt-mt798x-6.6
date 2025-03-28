@@ -12,9 +12,9 @@
  
  /* Device present registers. */
  #define MDIO_DEVS_PRESENT(devad)	(1 << (devad))
---- a/drivers/net/usb/qmi_wwan.c	2024-10-09 23:41:43.552792000 +0800
-+++ b/drivers/net/usb/qmi_wwan.c	2024-10-21 00:06:04.645533920 +0800
-@@ -576,6 +576,7 @@
+--- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -577,6 +577,7 @@ static int qmi_wwan_rx_fixup(struct usbn
  	eth_zero_addr(eth_hdr(skb)->h_source);
  fix_dest:
  	memcpy(eth_hdr(skb)->h_dest, dev->net->dev_addr, ETH_ALEN);
@@ -22,7 +22,7 @@
  	return 1;
  }
  
-@@ -885,6 +886,28 @@
+@@ -886,6 +887,28 @@ err:
  	return ret;
  }
  
@@ -51,7 +51,7 @@
  static const struct driver_info	qmi_wwan_info = {
  	.description	= "WWAN/QMI device",
  	.flags		= FLAG_WWAN | FLAG_SEND_ZLP,
-@@ -892,6 +915,7 @@
+@@ -893,6 +916,7 @@ static const struct driver_info	qmi_wwan
  	.unbind		= qmi_wwan_unbind,
  	.manage_power	= qmi_wwan_manage_power,
  	.rx_fixup       = qmi_wwan_rx_fixup,
@@ -59,7 +59,7 @@
  };
  
  static const struct driver_info	qmi_wwan_info_quirk_dtr = {
-@@ -901,6 +925,7 @@
+@@ -902,6 +926,7 @@ static const struct driver_info	qmi_wwan
  	.unbind		= qmi_wwan_unbind,
  	.manage_power	= qmi_wwan_manage_power,
  	.rx_fixup       = qmi_wwan_rx_fixup,
@@ -67,8 +67,8 @@
  	.data           = QMI_WWAN_QUIRK_DTR,
  };
  
---- a/net/netfilter/nft_counter.c	2023-08-30 22:27:28.000000000 +0800
-+++ b/net/netfilter/nft_counter.c	2024-09-23 08:18:34.386516407 +0800
+--- a/net/netfilter/nft_counter.c
++++ b/net/netfilter/nft_counter.c
 @@ -13,7 +13,27 @@
  #include <linux/netfilter.h>
  #include <linux/netfilter/nf_tables.h>
@@ -98,7 +98,7 @@
  struct nft_counter {
  	s64		bytes;
  	s64		packets;
-@@ -30,7 +50,25 @@
+@@ -30,7 +50,25 @@ static inline void nft_counter_do_eval(s
  				       const struct nft_pktinfo *pkt)
  {
  	struct nft_counter *this_cpu;
@@ -124,7 +124,7 @@
  
  	local_bh_disable();
  	this_cpu = this_cpu_ptr(priv->counter);
-@@ -40,6 +78,8 @@
+@@ -40,6 +78,8 @@ static inline void nft_counter_do_eval(s
  
  	this_cpu->bytes += pkt->skb->len;
  	this_cpu->packets++;
@@ -133,9 +133,9 @@
  
  	write_seqcount_end(myseq);
  	local_bh_enable();
---- a/include/net/netfilter/nf_flow_table.h	2024-09-13 16:35:08.862364500 +0800
-+++ b/include/net/netfilter/nf_flow_table.h	2024-09-14 10:28:23.716107006 +0800
-@@ -109,6 +109,7 @@
+--- a/include/net/netfilter/nf_flow_table.h
++++ b/include/net/netfilter/nf_flow_table.h
+@@ -109,6 +109,7 @@ struct flow_offload_hw_path {
  	u16 vlan_id;
  	u16 pppoe_sid;
  	u16 dsa_port;
@@ -143,8 +143,8 @@
  };
  
  #define NF_FLOW_TIMEOUT (30 * HZ)
---- a/drivers/net/bonding/bond_main.c	2024-09-13 16:35:08.772364500 +0800
-+++ b/drivers/net/bonding/bond_main.c	2024-09-14 11:18:53.735860267 +0800
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
 @@ -80,7 +80,10 @@
  #include <net/bonding.h>
  #include <net/bond_3ad.h>
@@ -157,7 +157,7 @@
  #include "bonding_priv.h"
  
  /*---------------------------- Module parameters ----------------------------*/
-@@ -4370,6 +4373,35 @@
+@@ -4369,6 +4372,35 @@ static void bond_ethtool_get_drvinfo(str
  		 BOND_ABI_VERSION);
  }
  
@@ -193,7 +193,7 @@
  static const struct ethtool_ops bond_ethtool_ops = {
  	.get_drvinfo		= bond_ethtool_get_drvinfo,
  	.get_link		= ethtool_op_get_link,
-@@ -4401,6 +4433,9 @@
+@@ -4400,6 +4432,9 @@ static const struct net_device_ops bond_
  	.ndo_del_slave		= bond_release,
  	.ndo_fix_features	= bond_fix_features,
  	.ndo_features_check	= passthru_features_check,
@@ -205,9 +205,9 @@
  static const struct device_type bond_type = {
 --- a/net/dsa/tag_mtk.c
 +++ b/net/dsa/tag_mtk.c
-@@ -25,6 +25,13 @@ static struct sk_buff *mtk_tag_xmit(stru
- 	u8 xmit_tpid;
- 	u8 *mtk_tag;
+@@ -30,6 +30,13 @@ static struct sk_buff *mtk_tag_xmit(stru
+ 
+ 	skb_set_queue_mapping(skb, dp->index);
  
 +	/* The Ethernet switch we are interfaced with needs packets to be at
 +	 * least 64 bytes (including FCS) otherwise their padding might be
@@ -219,8 +219,8 @@
  	/* Build the special tag after the MAC Source Address. If VLAN header
  	 * is present, it's required that VLAN header and special tag is
  	 * being combined. Only in this way we can allow the switch can parse
---- a/drivers/net/macvlan.c	2023-08-30 22:27:28.000000000 +0800
-+++ b/drivers/net/macvlan.c	2024-09-12 19:15:11.653886551 +0800
+--- a/drivers/net/macvlan.c
++++ b/drivers/net/macvlan.c
 @@ -33,6 +33,11 @@
  #include <linux/netpoll.h>
  #include <linux/phy.h>
@@ -233,7 +233,7 @@
  #define MACVLAN_HASH_BITS	8
  #define MACVLAN_HASH_SIZE	(1<<MACVLAN_HASH_BITS)
  #define MACVLAN_BC_QUEUE_LEN	1000
-@@ -1126,6 +1131,19 @@
+@@ -1126,6 +1131,19 @@ static int macvlan_dev_get_iflink(const
  	return vlan->lowerdev->ifindex;
  }
  
@@ -253,7 +253,7 @@
  static const struct ethtool_ops macvlan_ethtool_ops = {
  	.get_link		= ethtool_op_get_link,
  	.get_link_ksettings	= macvlan_ethtool_get_link_ksettings,
-@@ -1160,6 +1178,9 @@
+@@ -1160,6 +1178,9 @@ static const struct net_device_ops macvl
  	.ndo_get_iflink		= macvlan_dev_get_iflink,
  	.ndo_features_check	= passthru_features_check,
  	.ndo_change_proto_down  = dev_change_proto_down_generic,
@@ -263,8 +263,8 @@
  };
  
  void macvlan_common_setup(struct net_device *dev)
---- a/include/net/netfilter/nf_conntrack_acct.h	2024-01-04 22:35:10.790631711 +0800
-+++ b/include/net/netfilter/nf_conntrack_acct.h	2024-01-06 00:57:34.678787219 +0800
+--- a/include/net/netfilter/nf_conntrack_acct.h
++++ b/include/net/netfilter/nf_conntrack_acct.h
 @@ -14,6 +14,8 @@
  struct nf_conn_counter {
  	atomic64_t packets;
@@ -274,9 +274,8 @@
  };
  
  struct nf_conn_acct {
-
---- a/net/ipv4/netfilter/ip_tables.c	2024-01-01 02:04:02.972938000 +0800
-+++ b/net/ipv4/netfilter/ip_tables.c	2024-01-06 01:01:49.216454646 +0800
+--- a/net/ipv4/netfilter/ip_tables.c
++++ b/net/ipv4/netfilter/ip_tables.c
 @@ -27,6 +27,8 @@
  #include <linux/netfilter_ipv4/ip_tables.h>
  #include <net/netfilter/nf_log.h>
@@ -286,7 +285,7 @@
  
  MODULE_LICENSE("GPL");
  MODULE_AUTHOR("Netfilter Core Team <coreteam@netfilter.org>");
-@@ -273,6 +275,25 @@
+@@ -273,6 +275,25 @@ ipt_handle_default_rule(struct ipt_entry
  	return true;
  }
  
@@ -312,7 +311,7 @@
  /* Returns one of the generic firewall policies, like NF_ACCEPT. */
  unsigned int
  ipt_do_table(struct sk_buff *skb,
-@@ -291,7 +312,12 @@
+@@ -291,7 +312,12 @@ ipt_do_table(struct sk_buff *skb,
  	const struct xt_table_info *private;
  	struct xt_action_param acpar;
  	unsigned int addend;
@@ -326,7 +325,7 @@
  	/* Initialization */
  	WARN_ON(!(table->valid_hooks & (1 << hook)));
  	local_bh_disable();
-@@ -302,9 +328,22 @@
+@@ -302,9 +328,22 @@ ipt_do_table(struct sk_buff *skb,
  	e = get_entry(table_base, private->hook_entry[hook]);
  	if (ipt_handle_default_rule(e, &verdict)) {
  		struct xt_counters *counter;
@@ -350,7 +349,7 @@
  		local_bh_enable();
  		return verdict;
  	}
-@@ -360,6 +399,17 @@
+@@ -360,6 +399,17 @@ ipt_do_table(struct sk_buff *skb,
  
  		counter = xt_get_this_cpu_counter(&e->counters);
  		ADD_COUNTER(*counter, skb->len, 1);
@@ -368,9 +367,8 @@
  
  		t = ipt_get_target_c(e);
  		WARN_ON(!t->u.kernel.target);
-
---- a/net/ipv6/netfilter/ip6_tables.c	2023-08-30 22:27:28.000000000 +0800
-+++ b/net/ipv6/netfilter/ip6_tables.c	2024-01-06 01:03:01.874087644 +0800
+--- a/net/ipv6/netfilter/ip6_tables.c
++++ b/net/ipv6/netfilter/ip6_tables.c
 @@ -31,6 +31,8 @@
  #include <linux/netfilter/x_tables.h>
  #include <net/netfilter/nf_log.h>
@@ -380,7 +378,7 @@
  
  MODULE_LICENSE("GPL");
  MODULE_AUTHOR("Netfilter Core Team <coreteam@netfilter.org>");
-@@ -245,6 +247,25 @@
+@@ -245,6 +247,25 @@ ip6t_next_entry(const struct ip6t_entry
  	return (void *)entry + entry->next_offset;
  }
  
@@ -406,7 +404,7 @@
  /* Returns one of the generic firewall policies, like NF_ACCEPT. */
  unsigned int
  ip6t_do_table(struct sk_buff *skb,
-@@ -262,7 +283,12 @@
+@@ -262,7 +283,12 @@ ip6t_do_table(struct sk_buff *skb,
  	const struct xt_table_info *private;
  	struct xt_action_param acpar;
  	unsigned int addend;
@@ -420,7 +418,7 @@
  	/* Initialization */
  	stackidx = 0;
  	indev = state->in ? state->in->name : nulldevname;
-@@ -285,6 +311,7 @@
+@@ -285,6 +311,7 @@ ip6t_do_table(struct sk_buff *skb,
  	cpu        = smp_processor_id();
  	table_base = private->entries;
  	jumpstack  = (struct ip6t_entry **)private->jumpstack[cpu];
@@ -428,7 +426,7 @@
  
  	/* Switch to alternate jumpstack if we're being invoked via TEE.
  	 * TEE issues XT_CONTINUE verdict on original skb so we must not
-@@ -321,7 +348,20 @@
+@@ -321,7 +348,20 @@ ip6t_do_table(struct sk_buff *skb,
  
  		counter = xt_get_this_cpu_counter(&e->counters);
  		ADD_COUNTER(*counter, skb->len, 1);
@@ -449,4 +447,3 @@
  		t = ip6t_get_target_c(e);
  		WARN_ON(!t->u.kernel.target);
  
-

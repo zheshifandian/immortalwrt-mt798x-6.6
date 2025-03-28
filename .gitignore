@@ -35,3 +35,11 @@ git-src
 .cproject
 .ccache
 .vscode*
+package/mod/mosdns
+package/mod/luci-app-openclash
+package/mod/luci-theme-argon
+package/mod/luci-app-mosdns
+package/mod/luci-app-argon-config
+package/mod/luci-app-adguardhome
+package/mod/adguardhome
+package/mod/v2dat

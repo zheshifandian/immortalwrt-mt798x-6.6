@@ -10,13 +10,13 @@ PKG_NAME:=coreutils
 PKG_CPE_ID:=cpe:/a:gnu:coreutils
 PKG_VERSION:=9.5
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@GNU/coreutils
-PKG_HASH:=767ae6a22950ec42f3ba5f7c1de79dd27800ee8e9b8642da5dedb5974a1741e5
+PKG_HASH:=cd328edeac92f6a665de9f323c93b712af1858bc2e0d88f3f7100469470a1b8a
 
 HOST_BUILD_PARALLEL := 1
 
-PKG_PROGRAMS:=date readlink touch ln chown ginstall
+PKG_PROGRAMS:=chown date ginstall ln readlink rmdir touch
 
 include $(INCLUDE_DIR)/host-build.mk
 

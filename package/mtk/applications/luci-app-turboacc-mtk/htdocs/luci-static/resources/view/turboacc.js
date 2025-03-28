@@ -251,7 +251,7 @@ return view.extend({
 			_('Full cone NAT (NAT1) can improve gaming performance effectively.'));
 		o.value('0', _('Disable'))
 		o.value('2', _('Boardcom_FULLCONE_NAT'));
-		o.default = '0';
+		o.default = '2';
 		o.rmempty = false;
 
 		o = s.option(form.ListValue, 'tcpcca', _('TCP CCA'),

@@ -11,7 +11,7 @@ PKG_RELEASE:=1
 PKG_FLAGS:=essential
 
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/opkg-lede.git
+PKG_SOURCE_URL=https://github.com/openwrt/opkg-lede.git
 PKG_SOURCE_DATE:=2024-10-16
 PKG_SOURCE_VERSION:=38eccbb1fd694d4798ac1baf88f9ba83d1eac616
 PKG_MIRROR_HASH:=de58ff1c99c14789f9ba8946623c8c1e58d022e7e2a659d6f97c6fde54f2c4f4

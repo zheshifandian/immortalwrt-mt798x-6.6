@@ -11,7 +11,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=uci
 PKG_RELEASE:=1
 
-PKG_SOURCE_URL=$(PROJECT_GIT)/project/uci.git
+PKG_SOURCE_URL=https://github.com/openwrt/uci.git
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_DATE:=2025-01-20
 PKG_SOURCE_VERSION:=16ff0badbde7e17ec3bd1f827ffe45922956cf86
