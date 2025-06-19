@@ -1065,7 +1065,7 @@ define Device/h3c_magic-nx30-pro-nmbm
 endef
 TARGET_DEVICES += h3c_magic-nx30-pro-nmbm
 
-define Device/huasifei_wh3000-proAdd commentMore actions
+define Device/huasifei_wh3000-pro
   DEVICE_VENDOR := Huasifei
   DEVICE_MODEL := WH3000 Pro
   DEVICE_DTS := mt7981b-huasifei-wh3000-pro
