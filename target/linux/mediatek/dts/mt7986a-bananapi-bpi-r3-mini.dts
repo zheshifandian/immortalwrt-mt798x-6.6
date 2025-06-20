@@ -150,26 +150,15 @@
 	gmac0: mac@0 {
 		compatible = "mediatek,eth-mac";
 		reg = <0>;
+		phy-handle = <&phy14>;
 		phy-mode = "2500base-x";
-
-		fixed-link {
-			speed = <2500>;
-			full-duplex;
-			pause;
-		}; 
 	};
 
 	gmac1: mac@1 {
 		compatible = "mediatek,eth-mac";
 		reg = <1>;
+		phy-handle = <&phy15>;
 		phy-mode = "2500base-x";
-
-		fixed-link {
-                        speed = <2500>;
-                        full-duplex;
-                        pause;
-                };
-
 	};
 
 	mdio: mdio-bus {
@@ -183,6 +172,7 @@
 			pinctrl-0 = <&en8811_pwr_a>;
 
 			airoha,pnswap-rx;
+			airoha,phy-handle;
 			interrupt-parent = <&pio>;
 			interrupts = <48 IRQ_TYPE_EDGE_FALLING>;
 			reset-gpios = <&pio 49 GPIO_ACTIVE_LOW>;
@@ -218,6 +208,7 @@
 			pinctrl-0 = <&en8811_pwr_b>;
 
 			airoha,pnswap-rx;
+			airoha,phy-handle;
 			interrupt-parent = <&pio>;
 			interrupts = <46 IRQ_TYPE_EDGE_FALLING>;
 			reset-gpios = <&pio 47 GPIO_ACTIVE_LOW>;
