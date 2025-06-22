@@ -32,8 +32,8 @@ MT7986_whnat()
 
 	#Physical IRQ# setting
 	PCIe0=
-	eth_tx=229
-	eth_rx0=230
+	eth_tx=221
+	eth_rx0=229
 	usb=205
 	if [ -d "/proc/warp_ctrl/warp0" ]; then
 	wifi1_irq=237
@@ -735,7 +735,7 @@ setup_model()
 
 	case $board in
 	xiaomi,redmi-router-ax6000* |\
-	bananapi,bpi-r3mini* |\
+	bananapi,bpi-r3-mini* |\
 	netcore,n60* |\
 	glinet,gl-mt6000|\
 	jdcloud,re-cp-03 |\
