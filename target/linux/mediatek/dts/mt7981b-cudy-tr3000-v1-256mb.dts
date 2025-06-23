@@ -4,8 +4,8 @@
 #include "mt7981b-cudy-tr3000-v1.dtsi"
 
 / {
-	model = "Cudy TR3000 v1 ubi 112M";
-	compatible = "cudy,tr3000-v1-ubootmod", "mediatek,mt7981";
+	model = "Cudy TR3000 v1 256MB";
+	compatible = "cudy,tr3000-v1-256mb", "mediatek,mt7981";
 };
 
 &spi_nand {
@@ -22,5 +22,5 @@
 };
 
 &ubi {
-	reg = <0x5c0000 0x7000000>;
+	reg = <0x5c0000 0xe600000>;
 };

@@ -36,7 +36,6 @@ case "$board" in
 abt,asr3000|\
 cetron,ct3003-ubootmod|\
 cmcc,a10-ubootmod|\
-cudy,tr3000-v1-ubootmod|\
 h3c,magic-nx30-pro|\
 imou,lc-hx3001|\
 jcg,q30-pro|\
@@ -105,6 +104,12 @@ zbtlink,zbt-z8103ax)
 	;;
 comfast,cf-e393ax)
 	ubootenv_add_uci_config "/dev/mtd1" "0x0" "0x20000" "0x80000"
+	;;
+cudy,tr3000-v1|\
+cudy,tr3000-v1-256mb|\
+cudy,tr3000-v1-ubootmod)
+	local envdev=/dev/mtd$(find_mtd_index "u-boot-env")
+	ubootenv_add_uci_config "$envdev" "0x0" "0x80000" "0x80000"
 	;;
 dlink,aquila-pro-ai-m30-a1|\
 dlink,aquila-pro-ai-m60-a1)
