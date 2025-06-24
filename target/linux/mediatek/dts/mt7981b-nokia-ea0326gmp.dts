@@ -211,8 +211,18 @@
 			};
 
 			partition@580000 {
+				label = "Config";
+				reg = <0x580000 0x200000>;
+			};
+
+			partition@780000 {
+				label = "Config2";
+				reg = <0x780000 0x200000>;
+			};
+
+			partition@980000 {
 				label = "ubi";
-				reg = <0x580000 0x6e00000>;
+				reg = <0x980000 0x6e00000>;
 			};
 		};
 	};
