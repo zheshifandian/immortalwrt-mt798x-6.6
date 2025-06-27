@@ -778,7 +778,7 @@ TARGET_DEVICES += cudy_tr3000-v1
 define Device/cudy_tr3000-v1-ubootmod
   DEVICE_VENDOR := Cudy
   DEVICE_MODEL := TR3000
-  DEVICE_VARIANT := v1 mod
+  DEVICE_VARIANT := v1 MOD
   DEVICE_DTS := mt7981b-cudy-tr3000-v1-ubootmod
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += R47
@@ -795,8 +795,8 @@ TARGET_DEVICES += cudy_tr3000-v1-ubootmod
 define Device/cudy_tr3000-v1-256mb
   DEVICE_VENDOR := Cudy
   DEVICE_MODEL := TR3000
-  DEVICE_VARIANT := v1 256mb rom
-  DEVICE_DTS := mt7981b-cudy-tr3000-v1-ubootmod
+  DEVICE_VARIANT := v1 256mb
+  DEVICE_DTS := mt7981b-cudy-tr3000-v1-256mb
   DEVICE_DTS_DIR := ../dts
   SUPPORTED_DEVICES += R103
   UBINIZE_OPTS := -E 5
