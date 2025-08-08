@@ -781,7 +781,7 @@ $(eval $(call KernelPackage,sched-act-sample))
 define KernelPackage/sched-act-ipt
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=IPtables targets
-  DEPENDS:=+kmod-ipt-core +kmod-sched-core
+  DEPENDS:=@LINUX_6_6 +kmod-ipt-core +kmod-sched-core
   KCONFIG:=CONFIG_NET_ACT_IPT
   FILES:=$(LINUX_DIR)/net/sched/act_ipt.ko
   AUTOLOAD:=$(call AutoProbe, act_ipt)
@@ -1376,6 +1376,7 @@ $(eval $(call KernelPackage,mpls))
 define KernelPackage/9pnet
   SUBMENU:=$(NETWORK_SUPPORT_MENU)
   TITLE:=Plan 9 Resource Sharing Support (9P2000)
+  DEPENDS:=+!LINUX_6_6:kmod-fs-netfs
   KCONFIG:= \
 	CONFIG_NET_9P \
 	CONFIG_NET_9P_DEBUG=n \
@@ -1649,3 +1650,23 @@ define KernelPackage/qrtr-mhi/description
 endef
 
 $(eval $(call KernelPackage,qrtr-mhi))
+
+define KernelPackage/unix-diag
+  SUBMENU:=$(NETWORK_SUPPORT_MENU)
+  TITLE:=UNIX socket monitoring interface
+  KCONFIG:=CONFIG_UNIX_DIAG
+  FILES:= $(LINUX_DIR)/net/unix/unix_diag.ko
+  AUTOLOAD:=$(call AutoProbe,unix_diag)
+endef
+
+$(eval $(call KernelPackage,unix-diag))
+
+define KernelPackage/packet-diag
+  SUBMENU:=$(NETWORK_SUPPORT_MENU)
+  TITLE:=Packet sockets monitoring interface
+  KCONFIG:=CONFIG_PACKET_DIAG
+  FILES:= $(LINUX_DIR)/net/packet/af_packet_diag.ko
+  AUTOLOAD:=$(call AutoProbe,af_packet_diag)
+endef
+
+$(eval $(call KernelPackage,packet-diag))

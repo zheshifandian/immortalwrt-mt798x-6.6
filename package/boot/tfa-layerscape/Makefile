@@ -43,6 +43,7 @@ endef
 define Trusted-Firmware-A/Default
   BUILD_TARGET:=layerscape
   BUILD_SUBTARGET:=armv8_64b
+  BUILD_DEVICES:=fsl_$(1)
   DEPENDS:=+layerscape-rcw +u-boot-fsl_$(1)
 endef
 
@@ -161,6 +162,7 @@ TFA_TARGETS := \
   lx2160a-rdb-sdboot
 
 TFA_MAKE_FLAGS += \
+	$(if $(CONFIG_BINUTILS_VERSION_2_37)$(CONFIG_BINUTILS_VERSION_2_38),,LDFLAGS="-no-warn-rwx-segments") \
 	fip pbl \
 	BOOT_MODE=$(BOOT_MODE) \
 	RCW=$(STAGING_DIR_IMAGE)/fsl_$(BUILD_VARIANT)-rcw.bin \

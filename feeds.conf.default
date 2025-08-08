@@ -1,4 +1,9 @@
-src-git packages https://github.com/immortalwrt/packages.git;openwrt-24.10
+src-git argon https://github.com/sbwml/luci-theme-argon;openwrt-24.10
+src-git adguardhome https://github.com/zheshifandian/luci-app-adguardhome;mt6000
+src-git mosdns https://github.com/zheshifandian/luci-app-mosdns;mt6000
+src-git helloworld https://github.com/zheshifandian/helloworld;mt6000
+src-git packages https://github.com/zheshifandian/immortalwrt-packages;master-mt798x-6.6
 src-git luci https://github.com/immortalwrt/luci.git;openwrt-24.10
 src-git routing https://github.com/openwrt/routing.git;openwrt-24.10
 src-git telephony https://github.com/openwrt/telephony.git;openwrt-24.10
+src-git video https://github.com/openwrt/video.git

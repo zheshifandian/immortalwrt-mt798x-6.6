@@ -7,9 +7,9 @@ PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=https://github.com/immortalwrt/keyring.git
-PKG_SOURCE_DATE:=2024-11-01
-PKG_SOURCE_VERSION:=c5d6bdf2776ae5b0eaae547ced1767761f1a20d1
-PKG_MIRROR_HASH:=4f655d641df907598ae3d745e5ae4278d4f2a1085ff026ea23159cb84eacf014
+PKG_SOURCE_DATE:=2024-11-11
+PKG_SOURCE_VERSION:=f034bf5e9e6a28ad8fcfd82245d7812f561f79ef
+PKG_MIRROR_HASH:=4d92c04801e6bf63bc9e76c377bf2a24ffd7e7493d886fc29ae408cf5e849be5
 
 PKG_MAINTAINER:=John Crispin <john@phrozen.org>
 PKG_LICENSE:=GPL-2.0
@@ -33,14 +33,15 @@ Build/Compile=
 ifneq ($(CONFIG_USE_APK),)
 define Package/openwrt-keyring/install
 	$(INSTALL_DIR) $(1)/etc/apk/keys/
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/apk/*.pem $(1)/etc/apk/keys/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/apk/openwrt-snapshots.pem $(1)/etc/apk/keys/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/apk/immortalwrt-snapshots.pem $(1)/etc/apk/keys/
 endef
 else
 define Package/openwrt-keyring/install
 	$(INSTALL_DIR) $(1)/etc/opkg/keys/
-	# Public usign key for 24.10 release builds
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/usign/d310c6f2833e97f7 $(1)/etc/opkg/keys/
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/usign/3fd9011f340b50dd $(1)/etc/opkg/keys/
+	# Public usign key for unattended snapshot builds
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/usign/b5043e70f9a75cde $(1)/etc/opkg/keys/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/usign/8ead5420c4005b0d $(1)/etc/opkg/keys/
 endef
 endif
 

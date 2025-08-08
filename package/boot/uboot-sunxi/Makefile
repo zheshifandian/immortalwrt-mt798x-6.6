@@ -9,9 +9,8 @@
 include $(TOPDIR)/rules.mk
 include $(INCLUDE_DIR)/kernel.mk
 
-PKG_VERSION:=2024.01
-
-PKG_HASH:=b99611f1ed237bf3541bdc8434b68c96a6e05967061f992443cb30aabebef5b3
+PKG_VERSION:=2025.01
+PKG_HASH:=cdef7d507c93f1bbd9f015ea9bc21fa074268481405501945abc6f854d5b686f
 
 PKG_MAINTAINER:=Zoltan HERPAI <wigyori@uid0.hu>
 
@@ -93,6 +92,12 @@ define U-Boot/Bananapro
   BUILD_DEVICES:=lemaker_bananapro
 endef
 
+define U-Boot/beelink_x2
+  BUILD_SUBTARGET:=cortexa7
+  NAME:=Beelink X2 (H3)
+  BUILD_DEVICES:=roofull_beelink-x2
+endef
+
 define U-Boot/Cubieboard
   BUILD_SUBTARGET:=cortexa8
   NAME:=Cubieboard
@@ -114,6 +119,7 @@ endef
 define U-Boot/Hummingbird_A31
   BUILD_SUBTARGET:=cortexa7
   NAME:=Hummingbird A31 board
+  BUILD_DEVICES:=merrii_hummingbird
 endef
 
 define U-Boot/Marsboard_A10
@@ -345,6 +351,15 @@ define U-Boot/orangepi_zero2
   ATF:=h616
 endef
 
+define U-Boot/orangepi_zero2w
+  BUILD_SUBTARGET:=cortexa53
+  NAME:=Xunlong Orange Pi Zero2W
+  BUILD_DEVICES:=xunlong_orangepi-zero2w
+  DEPENDS:=+PACKAGE_u-boot-orangepi_zero2w:trusted-firmware-a-sunxi-h616
+  UENV:=h616
+  ATF:=h616
+endef
+
 define U-Boot/orangepi_zero3
   BUILD_SUBTARGET:=cortexa53
   NAME:=Xunlong Orange Pi Zero3
@@ -388,6 +403,7 @@ UBOOT_TARGETS := \
 	bananapi_p2_zero \
 	Bananapi_M2_Ultra \
 	Bananapro \
+	beelink_x2 \
 	Cubieboard \
 	Cubieboard2 \
 	Cubietruck \
@@ -418,6 +434,7 @@ UBOOT_TARGETS := \
 	orangepi_2 \
 	orangepi_pc2 \
 	orangepi_zero2 \
+	orangepi_zero2w \
 	orangepi_zero3 \
 	pangolin \
 	pine64_plus \
@@ -427,6 +444,11 @@ UBOOT_TARGETS := \
 	libretech_all_h3_cc_h5
 
 UBOOT_CONFIGURE_VARS += USE_PRIVATE_LIBGCC=yes
+
+UBOOT_CUSTOMIZE_CONFIG := \
+	--disable TOOLS_KWBIMAGE \
+	--disable TOOLS_LIBCRYPTO \
+	--disable TOOLS_MKEFICAPSULE
 
 UBOOT_MAKE_FLAGS += \
 	BL31=$(STAGING_DIR_IMAGE)/bl31_sunxi-$(ATF).bin SCP=/dev/null

@@ -1,6 +1,6 @@
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c	2025-06-24 23:21:14.810004356 +0800
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c	2025-06-25 18:58:28.807000462 +0800
-@@ -43,6 +43,8 @@
+--- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
++++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+@@ -43,6 +43,8 @@ static int mtk_wifi_num = 0;
  static int mtk_rest_cnt = 0;
  atomic_t eth1_in_br = ATOMIC_INIT(0);
  EXPORT_SYMBOL(eth1_in_br);
@@ -9,7 +9,7 @@
  static int mtk_msg_level = -1;
  module_param_named(msg_level, mtk_msg_level, int, 0);
  MODULE_PARM_DESC(msg_level, "Message level (-1=defaults,0=none,...,16=all)");
-@@ -2445,6 +2447,7 @@
+@@ -2445,6 +2447,7 @@ static int mtk_poll_rx(struct napi_struc
  	int done = 0, bytes = 0;
  	dma_addr_t dma_addr = DMA_MAPPING_ERROR;
  	int ppe_idx = 0;
@@ -17,7 +17,7 @@
  
  	if (unlikely(!ring))
  		goto rx_done;
-@@ -2483,8 +2486,11 @@
+@@ -2483,8 +2486,11 @@ static int mtk_poll_rx(struct napi_struc
  		}
  
  		if ( (mac == 4) || ((FIELD_GET(MTK_RXD4_PPE_CPU_REASON, trxd.rxd4)) == HIT_BIND_FORCE_TO_CPU))
@@ -30,7 +30,7 @@
  		if (unlikely(mac < 0 || mac >= MTK_MAX_DEVS ||
  			     !eth->netdev[mac]))
  			goto release_desc;
-@@ -2643,6 +2649,10 @@
+@@ -2643,6 +2649,10 @@ static int mtk_poll_rx(struct napi_struc
  			hw_lro_flush_stats_update(ring->ring_no, &trxd);
  		}
  
@@ -41,10 +41,9 @@
  		skb_record_rx_queue(skb, 0);
  		napi_gro_receive(napi, skb);
  
-
 --- a/drivers/mtd/mtdblock_ro.c
 +++ b/drivers/mtd/mtdblock_ro.c
-@@ -48,10 +48,6 @@
+@@ -48,10 +48,6 @@ static void mtdblock_add_mtd(struct mtd_
  	dev->tr = tr;
  	dev->readonly = 1;
  
@@ -57,7 +56,7 @@
  }
 --- a/drivers/mtd/mtdblock.c
 +++ b/drivers/mtd/mtdblock.c
-@@ -261,10 +261,6 @@
+@@ -261,10 +261,6 @@ static int mtdblock_open(struct mtd_blkt
  		return 0;
  	}
  

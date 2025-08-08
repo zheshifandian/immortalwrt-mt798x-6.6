@@ -9,13 +9,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=arm-trusted-firmware-mediatek
-PKG_RELEASE:=3
+PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=https://github.com/mtk-openwrt/arm-trusted-firmware.git
-PKG_SOURCE_DATE:=2024-01-17
-PKG_SOURCE_VERSION:=bacca82a8cac369470df052a9d801a0ceb9b74ca
-PKG_MIRROR_HASH:=1138649f64ac3982330925c38c795ca6860289adbd95755991f80afa30ebdea7
+PKG_SOURCE_DATE:=2025-07-11
+PKG_SOURCE_VERSION:=78a0dfd927bb00ce973a1f8eb4079df0f755887a
+PKG_MIRROR_HASH:=72a5f3f00f9e368226bb779dc098aac6195a312b48cc22172987d494ccd135d1
 
 PKG_MAINTAINER:=Daniel Golle <daniel@makrotopia.org>
 
@@ -464,6 +464,17 @@ define Trusted-Firmware-A/mt7988-ram-comb
   DEFAULT:=TARGET_mediatek_filogic
 endef
 
+define Trusted-Firmware-A/mt7988-ram-ddr4
+  NAME:=MediaTek MT7988 (RAM/ddr4)
+  BOOT_DEVICE:=ram
+  BUILD_SUBTARGET:=filogic
+  PLAT:=mt7988
+  RAM_BOOT_UART_DL:=1
+  HIDDEN:=
+  DEFAULT:=TARGET_mediatek_filogic
+  DDR_TYPE:=ddr4
+endef
+
 define Trusted-Firmware-A/mt7988-nor-comb
   NAME:=MediaTek MT7988 (SPI-NOR)
   BOOT_DEVICE:=nor
@@ -522,6 +533,15 @@ define Trusted-Firmware-A/mt7988-spim-nand-ubi-comb
   USE_UBI:=1
 endef
 
+define Trusted-Firmware-A/mt7988-spim-nand-ubi-ddr4
+  NAME:=MediaTek MT7988 (SPI-NAND via SPIM, DDR4)
+  BOOT_DEVICE:=spim-nand
+  BUILD_SUBTARGET:=filogic
+  PLAT:=mt7988
+  DDR_TYPE:=ddr4
+  USE_UBI:=1
+endef
+
 TFA_TARGETS:= \
 	mt7622-nor-1ddr \
 	mt7622-nor-2ddr \
@@ -573,13 +593,15 @@ TFA_TARGETS:= \
 	mt7988-snand-ddr4 \
 	mt7988-spim-nand-ddr4 \
 	mt7988-ram-comb \
+	mt7988-ram-ddr4 \
 	mt7988-emmc-comb \
 	mt7988-nor-comb \
 	mt7988-sdmmc-comb \
 	mt7988-snand-comb \
 	mt7988-snand-ubi-comb \
 	mt7988-spim-nand-comb \
-	mt7988-spim-nand-ubi-comb
+	mt7988-spim-nand-ubi-comb \
+	mt7988-spim-nand-ubi-ddr4
 
 TFA_MAKE_FLAGS += \
 	BOOT_DEVICE=$(BOOT_DEVICE) \
@@ -609,6 +631,7 @@ Package/trusted-firmware-a-mt7981-ram-ddr4/install = $(Package/trusted-firmware-
 Package/trusted-firmware-a-mt7986-ram-ddr3/install = $(Package/trusted-firmware-a-ram/install)
 Package/trusted-firmware-a-mt7986-ram-ddr4/install = $(Package/trusted-firmware-a-ram/install)
 Package/trusted-firmware-a-mt7988-ram-comb/install = $(Package/trusted-firmware-a-ram/install)
+Package/trusted-firmware-a-mt7988-ram-ddr4/install = $(Package/trusted-firmware-a-ram/install)
 
 define Package/trusted-firmware-a/install
 	$(INSTALL_DIR) $(STAGING_DIR_IMAGE)

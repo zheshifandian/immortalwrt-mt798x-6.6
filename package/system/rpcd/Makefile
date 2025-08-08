@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=rpcd
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=$(PROJECT_GIT)/project/rpcd.git
-PKG_MIRROR_HASH:=67b2cb985d8712a3e5a17ebf8c74fd35d553c8f9a4197616f9a3649a8740cc33
-PKG_SOURCE_DATE:=2024-09-17
-PKG_SOURCE_VERSION:=9f4b86e70352ab9ca6aa272d096419acc53e2390
+PKG_MIRROR_HASH:=51c77637b65dd3dbd0d39f902223678d190fb409a1293ac92bd5665ac790cab4
+PKG_SOURCE_DATE:=2025-06-22
+PKG_SOURCE_VERSION:=9389775ceb4702c82bd62b79cf17b0359c63e527
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 
 PKG_LICENSE:=ISC
@@ -39,7 +39,7 @@ endef
 
 define Package/rpcd
   $(Package/rpcd/default)
-  DEPENDS+= +libuci +libblobmsg-json +libjson-c
+  DEPENDS+= +USE_GLIBC:libcrypt-compat +libuci +libblobmsg-json +libjson-c
 endef
 
 define Package/rpcd/description

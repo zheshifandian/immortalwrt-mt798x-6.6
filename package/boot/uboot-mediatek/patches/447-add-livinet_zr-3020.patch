@@ -11,10 +11,10 @@
 +CONFIG_DEFAULT_DEVICE_TREE="mt7981-livinet-zr-3020"
 +CONFIG_OF_LIBFDT_OVERLAY=y
 +CONFIG_TARGET_MT7981=y
++CONFIG_SYS_LOAD_ADDR=0x46000000
 +CONFIG_PRE_CON_BUF_ADDR=0x4007EF00
 +CONFIG_DEBUG_UART_BASE=0x11002000
 +CONFIG_DEBUG_UART_CLOCK=40000000
-+CONFIG_SYS_LOAD_ADDR=0x46000000
 +CONFIG_DEBUG_UART=y
 +CONFIG_FIT=y
 +CONFIG_BOOTDELAY=30
@@ -39,14 +39,14 @@
 +CONFIG_CMD_GPT=y
 +CONFIG_CMD_MTD=y
 +CONFIG_CMD_PART=y
-+CONFIG_CMD_DHCP=y
 +CONFIG_CMD_TFTPSRV=y
 +CONFIG_CMD_RARP=y
-+CONFIG_CMD_PING=y
 +CONFIG_CMD_CDP=y
 +CONFIG_CMD_SNTP=y
-+CONFIG_CMD_DNS=y
 +CONFIG_CMD_LINK_LOCAL=y
++CONFIG_CMD_DHCP=y
++CONFIG_CMD_DNS=y
++CONFIG_CMD_PING=y
 +CONFIG_CMD_PXE=y
 +CONFIG_CMD_CACHE=y
 +CONFIG_CMD_PSTORE=y
@@ -65,15 +65,15 @@
 +CONFIG_ENV_UBI_VOLUME_REDUND="ubootenv2"
 +CONFIG_SYS_RELOC_GD_ENV_ADDR=y
 +CONFIG_USE_DEFAULT_ENV_FILE=y
-+CONFIG_DEFAULT_ENV_FILE="livinet_zr-3020_env"
++CONFIG_DEFAULT_ENV_FILE="defenvs/livinet_zr-3020_env"
 +CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
 +CONFIG_VERSION_VARIABLE=y
-+CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_NETCONSOLE=y
 +CONFIG_USE_IPADDR=y
 +CONFIG_IPADDR="192.168.1.1"
 +CONFIG_USE_SERVERIP=y
 +CONFIG_SERVERIP="192.168.1.254"
++CONFIG_NET_RANDOM_ETHADDR=y
 +CONFIG_REGMAP=y
 +CONFIG_SYSCON=y
 +CONFIG_BUTTON=y
@@ -101,13 +101,13 @@
 +CONFIG_DM_REGULATOR_GPIO=y
 +CONFIG_RAM=y
 +CONFIG_DM_SERIAL=y
++CONFIG_SERIAL_RX_BUFFER=y
 +CONFIG_MTK_SERIAL=y
 +CONFIG_SPI=y
 +CONFIG_DM_SPI=y
 +CONFIG_MTK_SPIM=y
 +CONFIG_ZSTD=y
 +CONFIG_HEXDUMP=y
-+CONFIG_LMB_MAX_REGIONS=64
 --- /dev/null
 +++ b/arch/arm/dts/mt7981-livinet-zr-3020.dts
 @@ -0,0 +1,197 @@
@@ -140,13 +140,13 @@
 +		button-reset {
 +			label = "reset";
 +			linux,code = <KEY_RESTART>;
-+			gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 1 GPIO_ACTIVE_LOW>;
 +		};
 +
 +		button-wps {
 +			label = "wps";
 +			linux,code = <KEY_WPS_BUTTON>;
-+			gpios = <&gpio 0 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 0 GPIO_ACTIVE_LOW>;
 +		};
 +	};
 +
@@ -155,49 +155,49 @@
 +
 +		led-0 {
 +			label = "red:d8";
-+			gpios = <&gpio 6 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 6 GPIO_ACTIVE_LOW>;
 +			default-state = "off";
 +		};
 +
 +		led-1 {
 +			label = "blue:internet";
-+			gpios = <&gpio 7 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 7 GPIO_ACTIVE_LOW>;
 +			default-state = "off";
 +		};
 +
 +		running_led: led-2 {
 +			label = "blue:running";
-+			gpios = <&gpio 9 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 9 GPIO_ACTIVE_LOW>;
 +			default-state = "off";
 +		};
 +
 +		upgrade_led: led-3 {
 +			label = "green:upgrade";
-+			gpios = <&gpio 10 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 10 GPIO_ACTIVE_LOW>;
 +			default-state = "off";
 +		};
 +
 +		boot_led: led-4 {
 +			label = "red:boot";
-+			gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 11 GPIO_ACTIVE_LOW>;
 +			default-state = "on";
 +		};
 +
 +		led-5 {
 +			label = "blue:d7";
-+			gpios = <&gpio 12 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 12 GPIO_ACTIVE_LOW>;
 +			default-state = "off";
 +		};
 +
 +		led-6 {
 +			label = "blue:wlan2g";
-+			gpios = <&gpio 34 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 34 GPIO_ACTIVE_LOW>;
 +			default-state = "off";
 +		};
 +
 +		led-7 {
 +			label = "blue:wlan5g";
-+			gpios = <&gpio 35 GPIO_ACTIVE_LOW>;
++			gpios = <&pio 35 GPIO_ACTIVE_LOW>;
 +			default-state = "off";
 +		};
 +	};
@@ -208,7 +208,7 @@
 +	mediatek,gmac-id = <0>;
 +	phy-mode = "2500base-x";
 +	mediatek,switch = "mt7531";
-+	reset-gpios = <&gpio 39 GPIO_ACTIVE_HIGH>;
++	reset-gpios = <&pio 39 GPIO_ACTIVE_HIGH>;
 +
 +	fixed-link {
 +		speed = <2500>;
@@ -216,7 +216,7 @@
 +	};
 +};
 +
-+&pinctrl {
++&pio {
 +	spi_flash_pins: spi0-pins-func-1 {
 +		mux {
 +			function = "flash";
@@ -309,7 +309,7 @@
 +	status = "disabled";
 +};
 --- /dev/null
-+++ b/livinet_zr-3020_env
++++ b/defenvs/livinet_zr-3020_env
 @@ -0,0 +1,54 @@
 +ipaddr=192.168.1.1
 +serverip=192.168.1.254

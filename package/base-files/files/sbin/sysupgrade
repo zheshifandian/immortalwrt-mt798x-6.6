@@ -259,7 +259,7 @@ create_backup_archive() {
 
 	v "Saving config files..."
 	[ "$VERBOSE" -gt 1 ] && TAR_V="v" || TAR_V=""
-	sed -i -e 's,^/,,' "$CONFFILES"
+	sed -i '/\/etc\/config\/fstab/d; /^\/etc\/wireless\//d' "$CONFFILES"
 	set -o pipefail
 	{
 		local ret=0
@@ -310,6 +310,7 @@ create_backup_archive() {
 if [ $CONF_BACKUP_LIST -eq 1 ]; then
 	run_hooks "$CONFFILES" $sysupgrade_init_conffiles
 	[ "$SAVE_INSTALLED_PKGS" -eq 1 ] && echo ${INSTALLED_PACKAGES} >> "$CONFFILES"
+	sed -i '/\/etc\/config\/fstab/d; /^\/etc\/wireless\//d' "$CONFFILES"
 	cat "$CONFFILES"
 	rm -f "$CONFFILES"
 	exit 0
